@@ -30,6 +30,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum',], function
     Route::post("permission/all", "PermissionControllers@all");
     Route::post("role/all", "RoleControllers@list");
     Route::post("pub/user/role", "UserControllers@roleList");
+    Route::post("pub/role/user_list", "RoleControllers@userList");
 });
 
 Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum']], function () {

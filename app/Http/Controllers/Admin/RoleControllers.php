@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Constants\CodeMessageConstants;
 use App\Http\Controllers\Controller;
 use App\Http\Model\Role;
+use App\Http\Model\User;
 use App\Http\Services\PermissionService;
 use Illuminate\Http\Request;
 
@@ -138,11 +139,26 @@ class RoleControllers extends Controller
     private function checkRole($id)
     {
         $role = Role::find($id);
-        if($role['alias']){
+        if ($role['alias']) {
             throw \ExceptionFactory::business(CodeMessageConstants::IS_ADMIN_CHECK);
         }
         if ($role['name'] == "admin")
             throw \ExceptionFactory::business(CodeMessageConstants::IS_ADMIN);
         return;
+    }
+
+    /**
+     * FunctionName：userList
+     * Description：获取角色下面的用户
+     * Author：cherish
+     * @return mixed
+     */
+    public function userList()
+    {
+        $this->request->validate([
+            'alias' => ['required', 'exists:' . (new Role())->getTable() . ',alias'],
+        ]);
+        $role = Role::where('alias', $this->request->input('alias'))->first();
+      return  User::role($role['name'])->get();
     }
 }
