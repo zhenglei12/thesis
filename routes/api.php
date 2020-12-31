@@ -29,16 +29,17 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum',], function
     Route::post("auth/logout", "UserControllers@logout");
     Route::post("permission/all", "PermissionControllers@all");
     Route::post("role/all", "RoleControllers@list");
+    Route::post("pub/user/role", "UserControllers@roleList");
 });
 
 Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permission']], function () {
-//    Route::post("role/list", "RoleControllers@list")->name('role-list');
-//    Route::get("role/detail", "RoleControllers@detail")->name('role-detail');
-//    Route::post("role/add", "RoleControllers@add")->name('role-add');
-//    Route::post("role/update", "RoleControllers@update")->name('role-update');
-//    Route::post("role/delete", "RoleControllers@delete")->name('role-delete');
-//    Route::post("role/permission", "RoleControllers@permission")->name('role-permission');
-//    Route::post("role/add/permission", "RoleControllers@addPermission")->name('role-add.permission');
+    Route::post("role/list", "RoleControllers@list")->name('role-list');
+    Route::get("role/detail", "RoleControllers@detail")->name('role-detail');
+    Route::post("role/add", "RoleControllers@add")->name('role-add');
+    Route::post("role/update", "RoleControllers@update")->name('role-update');
+    Route::post("role/delete", "RoleControllers@delete")->name('role-delete');
+    Route::post("role/permission", "RoleControllers@permission")->name('role-permission');
+    Route::post("role/add/permission", "RoleControllers@addPermission")->name('role-add.permission');
 
 
     Route::post("user/list", "UserControllers@list")->name('user-list');
