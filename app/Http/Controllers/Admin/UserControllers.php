@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Admin;
 
 
+use App\Http\Constants\CodeMessageConstants;
 use App\Http\Controllers\Controller;
 use App\Http\Model\User;
 use App\Http\Services\UserServices;
@@ -87,6 +88,9 @@ class UserControllers extends Controller
         $data['name'] = $this->request->input('username');
         if ($this->request->input('password'))
             $data['password'] = Hash::make($this->request->input('password'));
+        $user = User::find($this->request->input('id'));
+        if ($user['admin'])
+            throw \ExceptionFactory::business(CodeMessageConstants::IS_ADMIN);
         return User::where('id', $this->request->input('id'))->update($data);
     }
 
@@ -101,6 +105,9 @@ class UserControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new User())->getTable() . ',id'],
         ]);
+        $user = User::find($this->request->input('id'));
+        if ($user['admin'])
+            throw \ExceptionFactory::business(CodeMessageConstants::IS_ADMIN);
         return User::where('id', $this->request->input('id'))->delete();
     }
 
