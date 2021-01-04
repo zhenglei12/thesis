@@ -88,7 +88,7 @@ class OrderControllers extends Controller
             'name' => 'required',
             'submission_time' => 'required',
         ]);
-        $data  = $this->request->input();
+        $data = $this->request->input();
         $data['staff_name'] = Auth::user()->name;
         return Order::create($data);
     }
@@ -110,9 +110,70 @@ class OrderControllers extends Controller
             'name' => 'required',
             'submission_time' => 'required',
         ]);
-        $data  = self::initData($this->request->input());
+        $data = self::initData($this->request->input());
         return Order::where('id', $this->request->input('id'))->Update($data);
     }
+
+    /**
+     * FunctionName：statistics
+     * Description：统计
+     * Author：cherish
+     * @return mixed
+     */
+    public function statistics()
+    {
+        $data['amount_count'] = Order::sum('amount');
+        $data['received_amount_count'] = Order::sum('received_amount');
+        $data['month_amount_count'] = Order::whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
+        $data['month_received_amount_count'] = Order::whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
+        return $data;
+    }
+
+    /**
+     * FunctionName：status
+     * Description：修改状态
+     * Author：cherish
+     * @return mixed
+     */
+    public function status()
+    {
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
+            'status' => ['required'],
+        ]);
+        return Order::where('id', $this->request->input('id'))->Update(['status' => $this->request->input('status')]);
+    }
+
+    /**
+     * FunctionName：manuscript
+     * Description：上传稿件
+     * Author：cherish
+     * @return mixed
+     */
+    public function manuscript()
+    {
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
+            'manuscript' => ['required'],
+        ]);
+        return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript')]);
+    }
+
+    /**
+     * FunctionName：editName
+     * Description：分配编辑
+     * Author：cherish
+     * @return mixed
+     */
+    public function editName()
+    {
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
+            'edit_name' => ['required'],
+        ]);
+        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), "status" => 1]);
+    }
+
 
     /**
      * FunctionName：initData

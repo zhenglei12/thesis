@@ -59,10 +59,11 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum']], functio
     Route::get("order/detail", "OrderControllers@detail")->name('order-detail');
     Route::post("order/add", "OrderControllers@add")->name('order-add');
     Route::post("order/update", "OrderControllers@update")->name('order-update');
+    Route::post("order/statistics", "OrderControllers@statistics")->name('order-statistics');
+    Route::post("order/status", "OrderControllers@status")->name('order-status');
+    Route::post("order/edit_name", "OrderControllers@editName")->name('order-edit.name');
+    Route::post("order/manuscript", "OrderControllers@manuscript")->name('order-manuscript');
 
-
-//    Route::post("order/audit", "OrderControllers@audit")->name('order-audit');
-//    Route::post("order/statistics", "OrderControllers@statistics")->name('order-statistics');
 //    Route::post("order/exports", "OrderControllers@exports")->name('order-exports');
 
 });
