@@ -20,6 +20,16 @@ class UserSeeder extends Seeder
         ["name" => "role-delete", "guard_name" => "admin", "alias" => "角色删除"],
         ["name" => "role-permission", "guard_name" => "admin", "alias" => "角色的权限"],
         ["name" => "role-add.permission", "guard_name" => "admin", "alias" => "角色添加权限"],
+
+
+        ["name" => "order-list", "guard_name" => "admin", "alias" => "订单列表"],
+        ["name" => "order-detail", "guard_name" => "admin", "alias" => "订单详情"],
+        ["name" => "order-add", "guard_name" => "admin", "alias" => "订单添加"],
+        ["name" => "order-update", "guard_name" => "admin", "alias" => "订单更新"],
+        ["name" => "order-statistics", "guard_name" => "admin", "alias" => "订单统计"],
+        ["name" => "order-status", "guard_name" => "admin", "alias" => "修改状态"],
+        ["name" => "order-edit.name", "guard_name" => "admin", "alias" => "分配编辑"],
+        ["name" => "order-manuscript", "guard_name" => "admin", "alias" => "稿件上传"],
     ];
 
     /**
@@ -51,6 +61,16 @@ class UserSeeder extends Seeder
         \App\Http\Model\Role::create([
             'name' => 'admin',
             'guard_name' => 'admin'
+        ]);
+        \App\Http\Model\Role::create([
+            'name' => '客服',
+            'guard_name' => 'admin',
+            "alias" => "staff"
+        ]);
+        \App\Http\Model\Role::create([
+            'name' => '编辑',
+            'guard_name' => 'admin',
+            "alias" => "edit"
         ]);
     }
 

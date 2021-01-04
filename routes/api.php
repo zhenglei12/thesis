@@ -65,7 +65,6 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum']], functio
     Route::post("order/edit_name", "OrderControllers@editName")->name('order-edit.name');
     Route::post("order/manuscript", "OrderControllers@manuscript")->name('order-manuscript');
 
-//    Route::post("order/exports", "OrderControllers@exports")->name('order-exports');
 
 });
 

@@ -21,6 +21,7 @@ class CreateOrderTable extends Migration
             $table->string('task_ask')->comment('任务要求');
             $table->string('name')->index('name')->comment('客户名称');
             $table->string('phone')->nullable()->comment('客户电话');
+            $table->text('wr_where')->nullable()->comment('写作要求');
             $table->string('want_name')->nullable()->comment('旺旺名');
             $table->string('submission_time')->nullable()->comment('截止时间');
             $table->decimal("amount", 10,4)->default(0)->comment("订单总额");

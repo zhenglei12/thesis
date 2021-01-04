@@ -35,7 +35,7 @@ class OrderControllers extends Controller
             $order = $order->where('subject', 'like', "%" . $this->request->input('subject') . "%");
         }
         if ($this->request->input('word_number')) {
-            $order = $order->where('word_number', 'like', "%" . $this->request->input('word_number') . "%");
+            $order = $order->where('word_number',  $this->request->input('word_number'));
         }
         if ($this->request->input('task_type')) {
             $order = $order->where('task_type', '=', $this->request->input('task_type'));
@@ -199,7 +199,7 @@ class OrderControllers extends Controller
             'pay_type' => $data['pay_type'] ?? '',
             'detail_re' => $data['detail_re'] ?? '',
             'remark' => $data['remark'] ?? '',
-
+            'wr_where' => $data['wr_where']
         ];
         return $initData;
     }

@@ -28,6 +28,7 @@ class Order extends Model
         'remark',
         'manuscript',
         'status',
+        'wr_where',
         'pay_type'
     ];
 
