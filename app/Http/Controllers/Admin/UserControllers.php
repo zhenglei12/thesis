@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserControllers extends Controller
 {
-    public function __construct(Request  $request, UserServices $services)
+    public function __construct(Request $request, UserServices $services)
     {
         $this->request = $request;
         $this->services = $services;
@@ -164,7 +164,9 @@ class UserControllers extends Controller
      */
     public function detail()
     {
-        return \Auth::user();
+        $user = \Auth::user();
+        $user->roles;
+        return $user;
     }
 
     /**
