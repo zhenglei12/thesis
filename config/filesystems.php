@@ -64,6 +64,20 @@ return [
             'url' => env('AWS_URL'),
         ],
 
+
+        'cherishlin' => [
+            'driver' => 'qiniu',
+            'domains' => [
+                'default' => env('QINIU_URL'),                  //你的七牛域名
+                'https' => '',                                           //你的HTTPS域名
+                'custom' => '',                                           //你的自定义域名
+            ],
+            'access_key' => env('QINIU_ACCESS_KEY'),                          //AccessKey
+            'secret_key' => env('QINIU_SECRET_KEY'),  //SecretKey
+            'bucket' => env('QINIU_BUCKET') . 'cherishlin',                                  //Bucket名字
+            'notify_url' => '',                                               //持久化处理回调地址
+        ],
+
     ],
 
     /*

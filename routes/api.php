@@ -31,6 +31,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum',], function
     Route::post("role/all", "RoleControllers@list");
   //  Route::post("pub/user/role", "UserControllers@roleList");
     Route::post("pub/role/user_list", "RoleControllers@userList");
+    Route::post('qiniu/auth', 'UploadController@qiniuAuth'); //获取图片上传token
 });
 
 Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum']], function () {
