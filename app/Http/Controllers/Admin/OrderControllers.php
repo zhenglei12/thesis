@@ -156,6 +156,9 @@ class OrderControllers extends Controller
         if ($this->request->input('manuscript')) {
             $data['manuscript'] = $this->request->input('manuscript');
         }
+        if ($this->request->input('submission_time')) {
+            $data['submission_time'] = $this->request->input('submission_time');
+        }
         return Order::where('id', $this->request->input('id'))->Update($data);
     }
 
