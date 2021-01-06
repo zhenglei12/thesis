@@ -122,10 +122,15 @@ class OrderControllers extends Controller
      */
     public function statistics()
     {
-        $data['amount_count'] = Order::sum('amount');
-        $data['received_amount_count'] = Order::sum('received_amount');
-        $data['month_amount_count'] = Order::whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
-        $data['month_received_amount_count'] = Order::whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
+        $order = new Order();
+        $user = \Auth::user();
+        if($user->roles->pluck('alias') == 'staff'){
+            $order=  $order->where('staff_name', $user['name']);
+        }
+        $data['amount_count'] = $order->sum('amount');
+        $data['received_amount_count'] = $order->sum('received_amount');
+        $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
+        $data['month_received_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
         return $data;
     }
 
