@@ -124,7 +124,7 @@ class OrderControllers extends Controller
     {
         $order = new Order();
         $user = \Auth::user();
-        if($user->roles->pluck('alias') == 'staff'){
+        if($user->roles->pluck('alias')[0] == 'staff'){
             $order=  $order->where('staff_name', $user['name']);
         }
         $data['amount_count'] = $order->sum('amount');
