@@ -156,7 +156,7 @@ class OrderControllers extends Controller
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'manuscript' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript')]);
+        return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5]);
     }
 
     /**
