@@ -23,7 +23,7 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::post("auth/login", "UserControllers@login");
 });
 
-Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum', 'ly.permission'], function () {
+Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum'], function () {
     Route::get("user/detail", "UserControllers@detail");
     Route::get("user/permission", "UserControllers@permission");
     Route::post("auth/logout", "UserControllers@logout");
@@ -34,7 +34,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum', 'ly.permis
     Route::post('qiniu/auth', 'UploadController@qiniuAuth'); //获取图片上传token
 });
 
-Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permission']], function () {
     Route::post("role/list", "RoleControllers@list")->name('role-list');
     Route::get("role/detail", "RoleControllers@detail")->name('role-detail');
     Route::post("role/add", "RoleControllers@add")->name('role-add');
