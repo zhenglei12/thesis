@@ -33,7 +33,7 @@ class CreateOrderTable extends Migration
             $table->string('edit_name')->nullable()->comment('编辑名称');
             $table->string('remark')->nullable()->comment('备注');
             $table->string('manuscript')->nullable()->comment('稿件下载');
-            $table->string('status')->default(-1)->index('status')->comment('状态 -1等待安排 1 写作中， 2打回修改， 3 订单完成，4提交客户');
+            $table->string('status')->default(-1)->index('status')->comment('状态 -1等待安排 1 写作中， 2打回修改， 3 订单完成，4提交客户, 5已经交稿');
             $table->timestamps();
         });
     }

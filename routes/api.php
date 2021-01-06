@@ -23,7 +23,7 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::post("auth/login", "UserControllers@login");
 });
 
-Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum',], function () {
+Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum', 'ly.permission'], function () {
     Route::get("user/detail", "UserControllers@detail");
     Route::get("user/permission", "UserControllers@permission");
     Route::post("auth/logout", "UserControllers@logout");
