@@ -35,10 +35,16 @@ class OrderControllers extends Controller
             $order = $order->where('subject', 'like', "%" . $this->request->input('subject') . "%");
         }
         if ($this->request->input('word_number')) {
-            $order = $order->where('word_number',  $this->request->input('word_number'));
+            $order = $order->where('word_number', $this->request->input('word_number'));
         }
         if ($this->request->input('task_type')) {
             $order = $order->where('task_type', '=', $this->request->input('task_type'));
+        }
+        if ($this->request->input('id')) {
+            $order = $order->where('id', '=', $this->request->input('id'));
+        }
+        if ($this->request->input('name')) {
+            $order = $order->where('name', 'like', "%" . $this->request->input('name') . "%");
         }
         if ($this->request->input('staff_name')) {
             $order = $order->where('staff_name', 'like', "%" . $this->request->input('staff_name') . "%");
@@ -124,8 +130,8 @@ class OrderControllers extends Controller
     {
         $order = new Order();
         $user = \Auth::user();
-        if($user->roles->pluck('alias')[0] == 'staff'){
-            $order=  $order->where('staff_name', $user['name']);
+        if ($user->roles->pluck('alias')[0] == 'staff') {
+            $order = $order->where('staff_name', $user['name']);
         }
         $data['amount_count'] = $order->sum('amount');
         $data['received_amount_count'] = $order->sum('received_amount');
@@ -146,7 +152,11 @@ class OrderControllers extends Controller
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'status' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['status' => $this->request->input('status')]);
+        $data = ['status' => $this->request->input('status')];
+        if ($this->request->input('manuscript')) {
+            $data['manuscript'] = $this->request->input('manuscript');
+        }
+        return Order::where('id', $this->request->input('id'))->Update($data);
     }
 
     /**
