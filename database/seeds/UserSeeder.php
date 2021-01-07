@@ -85,7 +85,7 @@ class UserSeeder extends Seeder
 
     private function associateRolePermissions()
     {
-        $role = \App\Http\Model\Role::first();
+        $role = \App\Http\Model\Role::where('name', 'admin')->first();
 
         \App\Http\Model\User::first()->assignRole($role->name);
 
