@@ -217,7 +217,7 @@ class OrderControllers extends Controller
             'pay_type' => $data['pay_type'] ?? '',
             'detail_re' => $data['detail_re'] ?? '',
             'remark' => $data['remark'] ?? '',
-            'wr_where' => $data['wr_where']
+//            'wr_where' => $data['wr_where']
         ];
         return $initData;
     }
