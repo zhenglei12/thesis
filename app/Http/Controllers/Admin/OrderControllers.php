@@ -141,6 +141,23 @@ class OrderControllers extends Controller
     }
 
     /**
+     * FunctionName：count_num
+     * Description：统计字数
+     * Author：cherish
+     * @return mixed
+     */
+    public function count_num()
+    {
+        $order = new Order();
+        $user = \Auth::user();
+        if ($user->roles->pluck('alias')[0] == 'edit') {
+            $order = $order->where('edit_name', $user['name']);
+        }
+        $data['count_num'] = $order->sum('word_number');
+        return $data;
+    }
+
+    /**
      * FunctionName：status
      * Description：修改状态
      * Author：cherish

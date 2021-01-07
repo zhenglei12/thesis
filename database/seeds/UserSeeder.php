@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
 
         ["name" => "order-list", "guard_name" => "admin", "alias" => "订单列表"],
         ["name" => "order-detail", "guard_name" => "admin", "alias" => "订单详情"],
+        ["name" => "order-count.num", "guard_name" => "admin", "alias" => "统计文字"],
         ["name" => "order-add", "guard_name" => "admin", "alias" => "订单添加"],
         ["name" => "order-update", "guard_name" => "admin", "alias" => "订单更新"],
         ["name" => "order-statistics", "guard_name" => "admin", "alias" => "订单统计"],
