@@ -74,7 +74,7 @@ return [
             ],
             'access_key' => env('QINIU_ACCESS_KEY'),                          //AccessKey
             'secret_key' => env('QINIU_SECRET_KEY'),  //SecretKey
-            'bucket' => env('QINIU_BUCKET') . 'cherishlin',                                  //Bucket名字
+            'bucket' => env('QINIU_BUCKET') . 'lywang',                                  //Bucket名字
             'notify_url' => '',                                               //持久化处理回调地址
         ],
 
