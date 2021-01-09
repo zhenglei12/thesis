@@ -19,7 +19,7 @@ class UploadController extends Controller
     public function qiniuAuth(Request $request)
     {
         $request->validate([
-            'disk' => ['required', Rule::in(['cherishlin'])]
+            'disk' => ['required', Rule::in(['lywang'])]
         ]);
         $disk = $request->input('disk');
         $diskConnect = \Storage::disk($disk);

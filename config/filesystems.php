@@ -65,7 +65,7 @@ return [
         ],
 
 
-        'cherishlin' => [
+        'lywang' => [
             'driver' => 'qiniu',
             'domains' => [
                 'default' => env('QINIU_URL'),                  //你的七牛域名
