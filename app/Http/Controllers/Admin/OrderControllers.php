@@ -61,7 +61,7 @@ class OrderControllers extends Controller
         if ($this->request->input('created_at')) {
             $order = $order->where('created_at', '=', $this->request->input('created_at'));
         }
-        return $order->paginate($pageSize, ['*'], "page", $page);
+        return $order->orderBy('created_at', 'desc')->paginate($pageSize, ['*'], "page", $page);
     }
 
     /**
