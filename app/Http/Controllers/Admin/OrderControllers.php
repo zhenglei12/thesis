@@ -79,6 +79,21 @@ class OrderControllers extends Controller
     }
 
     /**
+     * FunctionName：delete
+     * Description：删除
+     * Author：cherish
+     * @return bool|null
+     * @throws \Exception
+     */
+    public function delete()
+    {
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
+        ]);
+        return Order::delete($this->request->input('id'));
+    }
+
+    /**
      * FunctionName：add
      * Description：创建
      * Author：cherish
