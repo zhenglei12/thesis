@@ -90,7 +90,7 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
         ]);
-        return Order::delete($this->request->input('id'));
+        return Order::where('id', $this->request->input('id'))->delete();
     }
 
     /**
