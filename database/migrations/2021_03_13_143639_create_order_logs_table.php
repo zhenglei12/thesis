@@ -16,8 +16,8 @@ class CreateOrderLogsTable extends Migration
         Schema::create('order_logs', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id')->comment('订单id');
-            $table->string('remark')->comment('备注');
-            $table->string('url')->comment('下载路径');
+            $table->string('remark')->nullable()->comment('备注');
+            $table->string('url')->nullable()->comment('下载路径');
             $table->string('reason')->nullable()->comment('打回原因');
             $table->timestamps();
         });

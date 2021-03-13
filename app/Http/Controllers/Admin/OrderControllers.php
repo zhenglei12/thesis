@@ -198,6 +198,9 @@ class OrderControllers extends Controller
         if ($this->request->input('reason')) {
             $orderLogs['reason'] = $this->request->input('reason');
         }
+        if ($this->request->input('reason')) {
+            $orderLogs['reason'] = $this->request->input('reason');
+        }
         if ($this->request->input('submission_time')) {
             $data['submission_time'] = $this->request->input('submission_time');
             $orderLogs['remark'] = $orderLogs['remark'] . ",将完成时间" . $order['submission_time'] . "修改为" . $this->request->input('submission_time');
