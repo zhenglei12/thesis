@@ -195,9 +195,7 @@ class OrderControllers extends Controller
             $data['manuscript'] = $this->request->input('manuscript');
             $orderLogs['url'] = $this->request->input('manuscript');
         }
-        if ($this->request->input('reason')) {
-            $orderLogs['reason'] = $this->request->input('reason');
-        }
+
         if ($this->request->input('reason')) {
             $orderLogs['reason'] = $this->request->input('reason');
         }
