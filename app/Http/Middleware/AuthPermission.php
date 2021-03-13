@@ -22,6 +22,10 @@ class AuthPermission
     {
         $permission = Route::currentRouteName();
 
+        if (Auth::user()->name == "admin") {
+            return $next($request);
+        }
+
         if (Auth::user()->can($permission)) {
             return $next($request);
         }

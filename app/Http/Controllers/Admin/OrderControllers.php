@@ -6,10 +6,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Model\Order;
+use App\Http\Model\OrderLogs;
 use App\Http\Model\User;
 use App\Http\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class OrderControllers extends Controller
@@ -59,7 +61,7 @@ class OrderControllers extends Controller
             $order = $order->where('status', '=', $this->request->input('status'));
         }
         if ($this->request->input('created_at')) {
-            $order = $order->where('created_at', '=', $this->request->input('created_at'));
+            $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
         }
         return $order->orderBy('created_at', 'desc')->paginate($pageSize, ['*'], "page", $page);
     }
@@ -116,7 +118,7 @@ class OrderControllers extends Controller
 
     /**
      * FunctionName：add
-     * Description：创建
+     * Description：更新
      * Author：cherish
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */
@@ -185,13 +187,39 @@ class OrderControllers extends Controller
             'status' => ['required'],
         ]);
         $data = ['status' => $this->request->input('status')];
+        $order = Order::find($this->request('id'));
+        $orderLogs = [];
+        $orderLogs['remark'] = $this->statusReplace(\Auth::user()->name, $order['status'], $this->request['status']);
         if ($this->request->input('manuscript')) {
             $data['manuscript'] = $this->request->input('manuscript');
+            $orderLogs['url'] = $this->request->input('manuscript');
+        }
+        if ($this->request->input('reason')) {
+            $orderLogs['reason'] = $this->request->input('reason');
         }
         if ($this->request->input('submission_time')) {
             $data['submission_time'] = $this->request->input('submission_time');
+            $orderLogs['remark'] = $orderLogs['remark'] . ",将完成时间" . $order['submission_time'] . "修改为" . $this->request->input('submission_time');
         }
-        return Order::where('id', $this->request->input('id'))->Update($data);
+        return DB::transaction(function () use ($data, $orderLogs) {
+            OrderLogs::create($orderLogs);
+            return Order::where('id', $this->request->input('id'))->Update($data);
+        });
+
+    }
+
+
+    public function statusReplace($name, $historyStarus, $status)
+    {
+        $data = [
+            '-1' => '等待安排',
+            '1' => '写作中',
+            '2' => '打回修改',
+            '3' => '订单完成',
+            '4' => '提交客户',
+            '5' => "已经交稿",
+        ];
+        return $name . ",将订单状态" . $data[$historyStarus] . "修改为" . $data[$status];
     }
 
     /**
@@ -206,7 +234,21 @@ class OrderControllers extends Controller
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'manuscript' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5]);
+        $order = Order::find($this->request('id'));
+        $orderLogs['remark'] = $this->statusReplace(\Auth::user()->name, $order['status'], $this->request['status']);
+        $orderLogs['url'] = $this->request->input('manuscript');
+        return DB::transaction(function () use ($orderLogs) {
+            OrderLogs::create($orderLogs);
+            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5]);
+        });
+    }
+
+    public function logs()
+    {
+        $page = $this->request->input('page') ?? 1;
+        $pageSize = $this->request->input('pageSize') ?? 10;
+        $order = new OrderLogs();
+        return $order->orderBy('created_at', 'desc')->paginate($pageSize, ['*'], "page", $page);
     }
 
     /**
