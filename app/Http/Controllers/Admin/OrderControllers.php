@@ -187,7 +187,7 @@ class OrderControllers extends Controller
             'status' => ['required'],
         ]);
         $data = ['status' => $this->request->input('status')];
-        $order = Order::find($this->request('id'));
+        $order = Order::find($this->request->input('id'));
         $orderLogs = [];
         $orderLogs['remark'] = $this->statusReplace(\Auth::user()->name, $order['status'], $this->request['status']);
         if ($this->request->input('manuscript')) {
