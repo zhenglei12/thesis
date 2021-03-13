@@ -189,6 +189,7 @@ class OrderControllers extends Controller
         $data = ['status' => $this->request->input('status')];
         $order = Order::find($this->request->input('id'));
         $orderLogs = [];
+        $orderLogs['order_id']=$this->request->input('id');
         $orderLogs['remark'] = $this->statusReplace(\Auth::user()->name, $order['status'], $this->request['status']);
         if ($this->request->input('manuscript')) {
             $data['manuscript'] = $this->request->input('manuscript');
@@ -237,6 +238,7 @@ class OrderControllers extends Controller
         $order = Order::find($this->request('id'));
         $orderLogs['remark'] = $this->statusReplace(\Auth::user()->name, $order['status'], $this->request['status']);
         $orderLogs['url'] = $this->request->input('manuscript');
+        $orderLogs['order_id']=$this->request->input('id');
         return DB::transaction(function () use ($orderLogs) {
             OrderLogs::create($orderLogs);
             return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5]);
@@ -245,9 +247,13 @@ class OrderControllers extends Controller
 
     public function logs()
     {
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
+        ]);
         $page = $this->request->input('page') ?? 1;
         $pageSize = $this->request->input('pageSize') ?? 10;
         $order = new OrderLogs();
+        $order->where('order_id', $this->request->input('id'));
         return $order->orderBy('created_at', 'desc')->paginate($pageSize, ['*'], "page", $page);
     }
 
