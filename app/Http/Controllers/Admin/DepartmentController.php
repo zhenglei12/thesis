@@ -31,17 +31,13 @@ class DepartmentController extends Controller
         if ($data['parent_id'] == 0) {
             $data['level'] = 1;
         } else {
-            $dep = Department::where('parent_id', $data['parent_id'])->first();
-            if(!$dep){
-                $data['level'] = 2;
-            }else{
-                if ($dep['level'] == 3)
-                    throw \ExceptionFactory::business(CodeMessageConstants::CHECK_LEVEL);
-                $data['level'] = $dep['level'] + 1;
-            }
+            $dep = Department::where('id', $data['parent_id'])->first();
+            $data['level'] = $dep['level'] + 1;
+            if ($dep['level'] == 3)
+                throw \ExceptionFactory::business(CodeMessageConstants::CHECK_LEVEL);
         }
 
-        return Department::create($this->request->input());
+        return Department::create($data);
     }
 
     /**
