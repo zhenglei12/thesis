@@ -29,7 +29,11 @@ class Order extends Model
         'manuscript',
         'status',
         'wr_where',
-        'pay_type'
+        'pay_type',
+        "receipt_time",
+        "receipt_account",
+        "classify_id",
+        'alter_word'
     ];
 
     protected $casts = [
@@ -41,4 +45,10 @@ class Order extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
+
+    public function classify()
+    {
+        return $this->hasOne(Classify::class, "id", "classify_id");
+    }
+
 }

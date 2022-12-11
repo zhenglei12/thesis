@@ -32,6 +32,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum'], function 
   //  Route::post("pub/user/role", "UserControllers@roleList");
     Route::post("pub/role/user_list", "RoleControllers@userList");
     Route::post('qiniu/auth', 'UploadController@qiniuAuth'); //获取图片上传token
+    Route::post("public/classify/list", "ClassifyControllers@getThreeCalssifyAll");
 });
 
 Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permission']], function () {
@@ -69,5 +70,18 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permi
     Route::post("order/manuscript", "OrderControllers@manuscript")->name('order-manuscript');
 
 
+
+    Route::post("classify/list", "ClassifyControllers@list")->name('classify-list');
+    Route::post("classify/delete", "ClassifyControllers@delete")->name('classify-delete');
+    Route::post("classify/update", "ClassifyControllers@update")->name('classify-update');
+    Route::post("classify/add", "ClassifyControllers@create")->name('classify-create');
+
+    Route::post("order/export", "OrderControllers@export")->name('order-export');
+
+    Route::post("edit/order/list", "EditControllers@orderList")->name('edit-statistics.order.list');
+    Route::post("edit/statistics/all/list", "EditControllers@allList")->name('edit-statistics.all.list');
+    Route::post("edit/statistics/day/list", "EditControllers@dayList")->name('edit-statistics.day.list');
+
+    Route::post("staff/statistics/list", "StaffControllers@list")->name('staff-statistics.list');
 });
 

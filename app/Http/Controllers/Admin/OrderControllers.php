@@ -4,15 +4,20 @@
 namespace App\Http\Controllers\Admin;
 
 
+use App\Http\Constants\CodeMessageConstants;
 use App\Http\Controllers\Controller;
+use App\Http\Model\Classify;
 use App\Http\Model\Order;
 use App\Http\Model\OrderLogs;
 use App\Http\Model\User;
+use App\Http\Services\ExportsOrderService;
 use App\Http\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderControllers extends Controller
 {
@@ -45,6 +50,9 @@ class OrderControllers extends Controller
         if ($this->request->input('id')) {
             $order = $order->where('id', '=', $this->request->input('id'));
         }
+        if ($this->request->input('classify_id')) {
+            $order = $order->where('classify_id', '=', $this->request->input('classify_id'));
+        }
         if ($this->request->input('name')) {
             $order = $order->where('name', 'like', "%" . $this->request->input('name') . "%");
         }
@@ -63,7 +71,7 @@ class OrderControllers extends Controller
         if ($this->request->input('created_at')) {
             $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
         }
-        return $order->orderBy('created_at', 'desc')->paginate($pageSize, ['*'], "page", $page);
+        return $order->orderBy('created_at', 'desc')->with('classify')->paginate($pageSize, ['*'], "page", $page);
     }
 
     /**
@@ -152,8 +160,10 @@ class OrderControllers extends Controller
         }
         $data['amount_count'] = $order->sum('amount');
         $data['received_amount_count'] = $order->sum('received_amount');
-        $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
-        $data['month_received_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
+        $data['month_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('amount');
+       // $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
+       // $data['month_received_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
+        $data['month_received_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('received_amount');
         return $data;
     }
 
@@ -235,14 +245,17 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'manuscript' => ['required'],
+            "alter_word" => ['required'],
+            "classify_id" =>  ['required', 'exists:' . (new Classify())->getTable() . ',id']
         ]);
         $order = Order::find($this->request->input('id'));
+        $alter_word = $this->request->input('alter_word') ?? $order['alter_word'];
         $orderLogs['remark'] = $this->statusReplace(\Auth::user()->name, $order['status'], 5);
         $orderLogs['url'] = $this->request->input('manuscript');
         $orderLogs['order_id'] = $this->request->input('id');
-        return DB::transaction(function () use ($orderLogs) {
+        return DB::transaction(function () use ($orderLogs, $alter_word) {
             OrderLogs::create($orderLogs);
-            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5]);
+            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5, 'alter_word' => $alter_word, 'classify_id' => $this->request->input('classify_id')]);
         });
     }
 
@@ -290,16 +303,75 @@ class OrderControllers extends Controller
             'task_ask' => $data['task_ask'],
             'name' => $data['name'],
             'submission_time' => $data['submission_time'],
-            'phone' => $data['phone'] ?? '',
+  //          'phone' => $data['phone'] ?? '',
             'want_name' => $data['want_name'] ?? '',
             'amount' => $data['amount'] ?? 0,
             'received_amount' => $data['received_amount'] ?? 0,
             'pay_img' => $data['pay_img'] ?? '',
             'pay_type' => $data['pay_type'] ?? '',
             'detail_re' => $data['detail_re'] ?? '',
+            'receipt_time' => $data['receipt_time'] ?? '',
+            'receipt_account' => $data['receipt_account'] ?? '',
+            'classify_id' => $data['classify_id'] ?? null,
             'remark' => $data['remark'] ?? '',
 //            'wr_where' => $data['wr_where']
         ];
         return $initData;
+    }
+
+
+    public function export()
+    {
+        $order = new Order();
+        if ($this->request->input('subject')) {
+            $order = $order->where('subject', 'like', "%" . $this->request->input('subject') . "%");
+        }
+        if ($this->request->input('word_number')) {
+            $order = $order->where('word_number', $this->request->input('word_number'));
+        }
+        if ($this->request->input('task_type')) {
+            $order = $order->where('task_type', '=', $this->request->input('task_type'));
+        }
+        if ($this->request->input('id')) {
+            $order = $order->where('id', '=', $this->request->input('id'));
+        }
+        if ($this->request->input('name')) {
+            $order = $order->where('name', 'like', "%" . $this->request->input('name') . "%");
+        }
+        if ($this->request->input('type')) {
+            $order = $order->where('type', 'like', "%" . $this->request->input('type') . "%");
+        }
+        if ($this->request->input('classify_id')) {
+            $order = $order->where('classify_id', '=', $this->request->input('classify_id'));
+        }
+        if ($this->request->input('staff_name')) {
+            $order = $order->where('staff_name', 'like', "%" . $this->request->input('staff_name') . "%");
+        }
+        if ($this->request->input('edit_name')) {
+            $order = $order->where('edit_name', 'like', "%" . $this->request->input('edit_name') . "%");
+        }
+        if ($this->request->input('end_time')) {
+            $order = $order->whereDate('created_at', '<=', $this->request->input('end_time'))->whereDate('created_at', '>=', $this->request->input('created_at'));
+        }
+        if ($this->request->input('submission_time')) {
+            $order = $order->where('submission_time', 'like', "%" . $this->request->input('submission_time') . "%");
+        }
+        if ($this->request->input('status')) {
+            $order = $order->where('status', '=', $this->request->input('status'));
+        }
+        if ($this->request->input('is_audit')) {
+            $order = $order->where('is_audit', '=', $this->request->input('is_audit'));
+        }
+        if ($this->request->input('created_at')) {
+            $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
+        }
+        $data = $order->get();
+      //  Log::debug("11", [ count($data)]);
+        if (count($data) < 1)
+            throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NULL);
+        if (count($data) > 2000)
+            throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NUM);
+        $filename = '订单列表.xls';
+        return Excel::download(new ExportsOrderService($data), $filename);
     }
 }

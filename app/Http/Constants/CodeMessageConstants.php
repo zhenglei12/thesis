@@ -23,4 +23,8 @@ class CodeMessageConstants
     const R_LIMIIT = ['code' => 21, 'message' => "最多可分配1000条"];
     const R_LIMIT_ROW = ['code' => 22, 'message' => "剩余可分配"];
     const CHECK_DAY = ['code' => 50, 'message' => "行程和天数不对等"];
+    const CHECK_CLASSIFY = ['code' => 51, 'message' => "订单中存在分类，请先删除订单"];
+    const CHECK_CHILD_CLASSIFY = ['code' => 52, 'message' => "存在子分类，请先删除子分类"];
+    const CHECK_ORDER_NULL = ['code' => 999, 'message' => "没有可导出订单"];
+    const CHECK_ORDER_NUM = ['code' => 111, 'message' => "最多只能导出2000条"];
 }
