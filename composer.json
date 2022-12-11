@@ -16,7 +16,8 @@
         "laravel/sanctum": "^2.8",
         "laravel/tinker": "^2.0",
         "spatie/laravel-permission": "^3.18",
-        "zgldh/qiniu-laravel-storage": "^0.10.3"
+        "zgldh/qiniu-laravel-storage": "^0.10.3",
+        "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -28,7 +29,8 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "secure-http": false
     },
     "extra": {
         "laravel": {
