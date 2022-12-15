@@ -6,34 +6,15 @@ namespace App\Http\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class ManuscriptBank extends Model
 {
-    protected $table = 'order';
+    protected $table = 'manuscript_bank';
 
     public $fillable = [
-        'task_type',
         'subject',
         'word_number',
-        'task_ask',
-        'name',
-        'phone',
-        'want_name',
-        'submission_time',
-        'amount',
-        'received_amount',
-        'pay_img',
-        'detail_re',
-        'staff_name',
-        'edit_name',
-        'remark',
         'manuscript',
-        'status',
-        'wr_where',
-        'pay_type',
-        "receipt_time",
-        "receipt_account",
         "classify_id",
-        'alter_word',
         'classify_local_id'
     ];
 
@@ -51,5 +32,4 @@ class Order extends Model
     {
         return $this->hasOne(Classify::class, "id", "classify_local_id");
     }
-
 }

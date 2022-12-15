@@ -83,5 +83,11 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permi
     Route::post("edit/statistics/day/list", "EditControllers@dayList")->name('edit-statistics.day.list');
 
     Route::post("staff/statistics/list", "StaffControllers@list")->name('staff-statistics.list');
+
+
+    Route::post("manuscript_bank/list", "ManuscriptBankControllers@list")->name('manuscript_bank-list');
+    Route::post("manuscript_bank/delete", "ManuscriptBankControllers@delete")->name('manuscript_bank-delete');
+    Route::post("manuscript_bank/update", "ManuscriptBankControllers@update")->name('manuscript_bank-update');
+    Route::post("manuscript_bank/add", "ManuscriptBankControllers@create")->name('manuscript_bank-create');
 });
 
