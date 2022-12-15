@@ -16,7 +16,7 @@ class AddOrderTable extends Migration
         Schema::table('order', function (Blueprint $table) {
             $table->string("receipt_time")->nullable()->comment("付款时间");
             $table->string("receipt_account")->nullable()->comment("收款账户");
-            $table->integer('classify_id')->nullable()->comment('分类id');
+            $table->string('classify_id')->nullable()->comment('分类id');
             $table->string('alter_word')->nullable()->comment('编辑上传的字数');
             $table->index("classify_id");
         });

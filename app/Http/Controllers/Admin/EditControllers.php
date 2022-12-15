@@ -96,7 +96,7 @@ class EditControllers
             $order = $order->where('id', '=', $this->request->input('id'));
         }
         if ($this->request->input('classify_id')) {
-            $order = $order->where('classify_id', '=', $this->request->input('classify_id'));
+            $order = $order->where('classify_id', 'like', "%" . $this->request->input('classify_id') . "%");
         }
         if ($this->request->input('status')) {
             $order = $order->where('status', '=', $this->request->input('status'));

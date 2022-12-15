@@ -51,7 +51,7 @@ class OrderControllers extends Controller
             $order = $order->where('id', '=', $this->request->input('id'));
         }
         if ($this->request->input('classify_id')) {
-            $order = $order->where('classify_id', '=', $this->request->input('classify_id'));
+            $order = $order->where('classify_id', 'like', "%" . $this->request->input('classify_id') . "%");
         }
         if ($this->request->input('name')) {
             $order = $order->where('name', 'like', "%" . $this->request->input('name') . "%");
@@ -121,6 +121,13 @@ class OrderControllers extends Controller
         ]);
         $data = $this->request->input();
         $data['staff_name'] = Auth::user()->name;
+        if (isset($data['classify_id'])) {
+            $data['classify_local_id'] = (new ManuscriptBankControllers())->getClassifyId($data['classify_id']);
+            $data['classify_id'] = implode(",", $data['classify_id']);
+        } else {
+            $data['classify_local_id'] = null;
+            $data['classify_id'] = null;
+        }
         return Order::create($data);
     }
 
@@ -142,6 +149,13 @@ class OrderControllers extends Controller
             'submission_time' => 'required',
         ]);
         $data = self::initData($this->request->input());
+        if (isset($data['classify_id'])) {
+            $data['classify_local_id'] = (new ManuscriptBankControllers())->getClassifyId($data['classify_id']);
+            $data['classify_id'] = implode(",", $data['classify_id']);
+        } else {
+            $data['classify_local_id'] = null;
+            $data['classify_id'] = null;
+        }
         return Order::where('id', $this->request->input('id'))->Update($data);
     }
 
@@ -161,8 +175,8 @@ class OrderControllers extends Controller
         $data['amount_count'] = $order->sum('amount');
         $data['received_amount_count'] = $order->sum('received_amount');
         $data['month_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('amount');
-       // $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
-       // $data['month_received_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
+        // $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
+        // $data['month_received_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
         $data['month_received_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('received_amount');
         return $data;
     }
@@ -246,16 +260,24 @@ class OrderControllers extends Controller
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'manuscript' => ['required'],
             "alter_word" => ['required'],
-            "classify_id" =>  ['required', 'exists:' . (new Classify())->getTable() . ',id']
+            "classify_id" => ['required']
         ]);
         $order = Order::find($this->request->input('id'));
         $alter_word = $this->request->input('alter_word') ?? $order['alter_word'];
         $orderLogs['remark'] = $this->statusReplace(\Auth::user()->name, $order['status'], 5);
         $orderLogs['url'] = $this->request->input('manuscript');
         $orderLogs['order_id'] = $this->request->input('id');
-        return DB::transaction(function () use ($orderLogs, $alter_word) {
+        $data= $this->request->input();
+        if (isset($data['classify_id'])) {
+            $classify_local_id = (new ManuscriptBankControllers())->getClassifyId($this->request->input('classify_id'));
+            $classify_id = implode(",", $this->request->input('classify_id'));
+        } else {
+            $classify_local_id = null;
+            $classify_id = null;
+        }
+        return DB::transaction(function () use ($orderLogs, $alter_word, $classify_id,$classify_local_id ) {
             OrderLogs::create($orderLogs);
-            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5, 'alter_word' => $alter_word, 'classify_id' => $this->request->input('classify_id')]);
+            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5, 'alter_word' => $alter_word, 'classify_id' => $classify_id, 'classify_local_id' =>$classify_local_id]);
         });
     }
 
@@ -303,7 +325,7 @@ class OrderControllers extends Controller
             'task_ask' => $data['task_ask'],
             'name' => $data['name'],
             'submission_time' => $data['submission_time'],
-  //          'phone' => $data['phone'] ?? '',
+            //          'phone' => $data['phone'] ?? '',
             'want_name' => $data['want_name'] ?? '',
             'amount' => $data['amount'] ?? 0,
             'received_amount' => $data['received_amount'] ?? 0,
@@ -312,7 +334,6 @@ class OrderControllers extends Controller
             'detail_re' => $data['detail_re'] ?? '',
             'receipt_time' => $data['receipt_time'] ?? '',
             'receipt_account' => $data['receipt_account'] ?? '',
-            'classify_id' => $data['classify_id'] ?? null,
             'remark' => $data['remark'] ?? '',
 //            'wr_where' => $data['wr_where']
         ];
@@ -342,7 +363,7 @@ class OrderControllers extends Controller
             $order = $order->where('type', 'like', "%" . $this->request->input('type') . "%");
         }
         if ($this->request->input('classify_id')) {
-            $order = $order->where('classify_id', '=', $this->request->input('classify_id'));
+            $order = $order->where('classify_id', 'like', "%" . $this->request->input('classify_id') . "%");
         }
         if ($this->request->input('staff_name')) {
             $order = $order->where('staff_name', 'like', "%" . $this->request->input('staff_name') . "%");
@@ -366,7 +387,7 @@ class OrderControllers extends Controller
             $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
         }
         $data = $order->get();
-      //  Log::debug("11", [ count($data)]);
+        //  Log::debug("11", [ count($data)]);
         if (count($data) < 1)
             throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NULL);
         if (count($data) > 2000)

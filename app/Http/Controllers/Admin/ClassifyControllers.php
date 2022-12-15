@@ -104,8 +104,12 @@ class ClassifyControllers
      */
     public function getThreeCalssifyAll()
     {
-        $all = Classify::where('parent_id', 0)->with('children')->get();
-        return collect($all)->pluck('children.*.children')->collapse()->collapse();
+//        $all = Classify::where('parent_id', 0)->with('children')->get();
+//        return collect($all)->pluck('children.*.children')->collapse()->collapse();
+
+        $classify = new Classify();
+        $classify =  $classify->with('children');
+        return $classify->where('parent_id', 0)->orderBy('created_at', 'desc')->get();
     }
 
 }
