@@ -19,7 +19,7 @@ class CreateManuscriptBankTable extends Migration
             $table->string('word_number')->index('word_number')->nullable()->comment('字数');
             $table->string('manuscript')->nullable()->comment('稿件下载');
             $table->string('classify_id')->nullable()->comment('分类id');
-            $table->string('classify_id')->nullable()->comment('分类id');
+            $table->string('classify_local_id')->nullable()->comment('分类id');
             $table->index("classify_local_id");
             $table->timestamps();
         });
