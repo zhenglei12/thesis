@@ -34,7 +34,11 @@ class Order extends Model
         "receipt_account",
         "classify_id",
         'alter_word',
-        'classify_local_id'
+        'classify_local_id',
+        'finance_check',
+        'edit_submit_time',
+        'after_banlace',
+        'after_time'
     ];
 
     protected $casts = [

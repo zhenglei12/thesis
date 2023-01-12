@@ -34,6 +34,9 @@ class EditControllers
         if ($this->request->input('end_time')) {
             $order = $order->whereDate('created_at', '<=', $this->request->input('end_time'))->whereDate('created_at', '>=', $this->request->input('created_at'));
         }
+        if ($this->request->input('submission_time')) {
+            $order = $order->whereDate('submission_time', '<=', $this->request->input('submission_time'));
+        }
         $role = Role::where('alias', "edit")->first();
         $userName = User::role($role['name'])->pluck('name');
         $order = $order->whereIn('edit_name', $userName);
@@ -58,26 +61,28 @@ class EditControllers
         $page = $this->request->input('page') ?? 1;
         $pageSize = $this->request->input('pageSize') ?? 10;
         $order = new Order();
+        $allOrder = new Order();
         if ($this->request->input('name')) {
             $order = $order->where('edit_name', 'like', "%" . $this->request->input('name') . "%");
         }
         if ($this->request->input('created_at')) {
-            $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
+            $date =$this->request->input('created_at');
         } else {
-            $order = $order->where('created_at', 'like', "%" . date('Y-m-d') . "%");
+            $date = date("Y-m-d");
         }
         $role = Role::where('alias', "edit")->first();
         $userName = User::role($role['name'])->pluck('name');
         $order = $order->whereIn('edit_name', $userName);
+
         return $order->select(
             "edit_name",
-            DB::raw("sum(case when status = 4 or status = 5  then 1 else 0 end) as commit"), //提交数量
-            DB::raw("sum(case when status = 2 then word_number else 0 end) as commit_word_number"), //提交字数
-            DB::raw("sum(case when status = 2 then 1 else 0 end) as alter_number"), //修改数量
-            DB::raw("sum(case when status = 2 then 1 else 0 end) as alter_word_number"), //修改字数
-            DB::raw("	count(id) as num"), //数量
-            DB::raw("	sum(amount) as amount"), //金额
-            DB::raw("sum(word_number) as word_number") //字数
+            DB::raw("count(case when edit_submit_time like '%$date%' then edit_submit_time else null end) as commit"), //提交数量
+            DB::raw("sum(case when edit_submit_time like '%$date%' then word_number else 0 end) as commit_word_number"), //提交字数
+            DB::raw("count(case when edit_submit_time like '%$date%' then edit_submit_time else null end) as alter_number"), //修改数量
+            DB::raw("sum(case when edit_submit_time like '%$date%' then alter_word else 0 end) as alter_word_number"), //修改字数
+            DB::raw("count(case when created_at like '%$date%' then created_at else null end ) as num"), //数量
+            DB::raw("	sum(case when created_at like '%$date%' then amount else 0 end) as amount"),//金额
+            DB::raw("sum(case when created_at like '%$date%' then word_number else 0 end) as word_number") //字数
         )->groupBy('edit_name')->paginate($pageSize, ['*'], "page", $page);
     }
 

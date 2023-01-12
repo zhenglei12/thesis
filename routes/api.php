@@ -69,7 +69,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permi
     Route::post("order/edit_name", "OrderControllers@editName")->name('order-edit.name');
     Route::post("order/manuscript", "OrderControllers@manuscript")->name('order-manuscript');
 
-
+    Route::post("order/after", "OrderControllers@after")->name('order-after');
 
     Route::post("classify/list", "ClassifyControllers@list")->name('classify-list');
     Route::post("classify/delete", "ClassifyControllers@delete")->name('classify-delete');
@@ -83,7 +83,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permi
     Route::post("edit/statistics/day/list", "EditControllers@dayList")->name('edit-statistics.day.list');
 
     Route::post("staff/statistics/list", "StaffControllers@list")->name('staff-statistics.list');
-
+    Route::post("staff/statistics/list/export", "StaffControllers@export")->name('staff-statistics.export');
 
     Route::post("manuscript_bank/list", "ManuscriptBankControllers@list")->name('manuscript_bank-list');
     Route::post("manuscript_bank/delete", "ManuscriptBankControllers@delete")->name('manuscript_bank-delete');
