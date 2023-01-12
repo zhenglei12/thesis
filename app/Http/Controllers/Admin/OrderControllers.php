@@ -68,8 +68,11 @@ class OrderControllers extends Controller
         if ($this->request->input('status')) {
             $order = $order->where('status', '=', $this->request->input('status'));
         }
-        if ($this->request->input('created_at')) {
-            $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
+//        if ($this->request->input('created_at')) {
+//            $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
+//        }
+        if ($this->request->input('end_time')) {
+            $order = $order->whereDate('created_at', '<=', $this->request->input('end_time'))->whereDate('created_at', '>=', $this->request->input('created_at'));
         }
         return $order->orderBy('created_at', 'desc')->with('classify')->paginate($pageSize, ['*'], "page", $page);
     }
@@ -128,6 +131,9 @@ class OrderControllers extends Controller
             $data['classify_local_id'] = null;
             $data['classify_id'] = null;
         }
+        if(isset($data['receipt_time']) && $data['receipt_time'] > 0){
+            $data['receipt_time'] = 1;
+        }
         return Order::create($data);
     }
 
@@ -156,6 +162,25 @@ class OrderControllers extends Controller
             $data['classify_local_id'] = null;
             $data['classify_id'] = null;
         }
+        if(isset($data['receipt_time']) && $data['receipt_time'] > 0){
+            $data['finance_check'] = 1;
+        }
+        return Order::where('id', $this->request->input('id'))->Update($data);
+    }
+
+    /**
+     * FunctionName：after
+     * Description：售后
+     * Author：cherish
+     * @return mixed
+     */
+    public function after(){
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
+            'after_banlace' => ['required'],
+        ]);
+        $data = $this->request->input();
+        $data['after_time'] = date("Y-m-d H:i:s");
         return Order::where('id', $this->request->input('id'))->Update($data);
     }
 
@@ -277,7 +302,7 @@ class OrderControllers extends Controller
         }
         return DB::transaction(function () use ($orderLogs, $alter_word, $classify_id,$classify_local_id ) {
             OrderLogs::create($orderLogs);
-            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5, 'alter_word' => $alter_word, 'classify_id' => $classify_id, 'classify_local_id' =>$classify_local_id]);
+            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5, 'alter_word' => $alter_word, 'classify_id' => $classify_id, 'classify_local_id' =>$classify_local_id, 'edit_submit_time' => date("Y-m-d H:i:s")]);
         });
     }
 
@@ -383,8 +408,11 @@ class OrderControllers extends Controller
         if ($this->request->input('is_audit')) {
             $order = $order->where('is_audit', '=', $this->request->input('is_audit'));
         }
-        if ($this->request->input('created_at')) {
-            $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
+//        if ($this->request->input('created_at')) {
+//            $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
+//        }
+        if ($this->request->input('end_time')) {
+            $order = $order->whereDate('created_at', '<=', $this->request->input('end_time'))->whereDate('created_at', '>=', $this->request->input('created_at'));
         }
         $data = $order->get();
         //  Log::debug("11", [ count($data)]);
