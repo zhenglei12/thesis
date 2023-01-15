@@ -46,13 +46,13 @@ class StaffControllers
         $all = $all->whereIn('staff_name', $userName);
         $data['amount_count'] = $all->sum('amount');
         $data['received_amount_count'] = $all->sum('received_amount');
-        $data['receipt_amount_count'] = $all->sum('receipt_time');
+        $data['receipt_amount_count'] = $all->sum('amount') - $all->sum('received_amount');
         $data['after_amount_count'] = $all->sum('after_banlace');
         $data['list'] = $order->select(
             "staff_name",
             DB::raw('sum(amount) as amount'),
             DB::raw('sum(received_amount) as received_amount'),
-            DB::raw('sum(receipt_time) as receipt_time'),
+            DB::raw('sum(ifnull(amount,0)) - sum(ifnull(received_amount,0)) as receipt_time'),
             DB::raw('sum(after_banlace) as after_banlace')
         )->groupBy('staff_name')->paginate($pageSize, ['*'], "page", $page);
         return $data;
