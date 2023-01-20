@@ -62,8 +62,8 @@ class OrderControllers extends Controller
         if ($this->request->input('edit_name')) {
             $order = $order->where('edit_name', 'like', "%" . $this->request->input('edit_name') . "%");
         }
-        if ($this->request->input('submission_time')) {
-            $order = $order->where('submission_time', '=', $this->request->input('submission_time'));
+        if ($this->request->input('submission_end_time')) {
+            $order = $order->whereDate('submission_time', '<=', $this->request->input('submission_end_time'))->whereDate('submission_time', '>=', $this->request->input('submission_time'));
         }
         if ($this->request->input('status')) {
             $order = $order->where('status', '=', $this->request->input('status'));
@@ -331,6 +331,20 @@ class OrderControllers extends Controller
             'edit_name' => ['required'],
         ]);
         return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), "status" => 1]);
+    }
+
+    /**
+     * FunctionName：grade
+     * Description：更新难度等级
+     * Author：cherish
+     * @return mixed
+     */
+    public function grade(){
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
+            'hard_grade' => ['required'],
+        ]);
+        return Order::where('id', $this->request->input('id'))->Update(['hard_grade' => $this->request->input('hard_grade')]);
     }
 
 

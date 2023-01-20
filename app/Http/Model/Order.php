@@ -38,7 +38,8 @@ class Order extends Model
         'finance_check',
         'edit_submit_time',
         'after_banlace',
-        'after_time'
+        'after_time',
+        'hard_grade'
     ];
 
     protected $casts = [
