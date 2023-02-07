@@ -131,8 +131,9 @@ class OrderControllers extends Controller
             $data['classify_local_id'] = null;
             $data['classify_id'] = null;
         }
-        if(isset($data['receipt_time']) && $data['receipt_time'] > 0){
-            $data['receipt_time'] = 1;
+        if(isset($data['amount']) && isset($data['received_amount'])){
+            if($data['amount'] == $data['received_amount'])
+            $data['finance_check'] = 1;
         }
         return Order::create($data);
     }
@@ -162,8 +163,9 @@ class OrderControllers extends Controller
             $data['classify_local_id'] = null;
             $data['classify_id'] = null;
         }
-        if(isset($data['receipt_time']) && $data['receipt_time'] > 0){
-            $data['finance_check'] = 1;
+        if(isset($data['amount']) && isset($data['received_amount'])){
+            if($data['amount'] == $data['received_amount'])
+                $data['finance_check'] = 1;
         }
         return Order::where('id', $this->request->input('id'))->Update($data);
     }
