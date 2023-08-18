@@ -146,14 +146,14 @@ class OrderControllers extends Controller
             $data['classify_id'] = null;
         }
 
-        if (!empty($data['pay_img'])) {
+        if (isset($data['pay_img'])) {
             $data['finance_check'] = 0;
         }
 
-        if (!empty($data['twice_img'])) {
+        if (isset($data['twice_img'])) {
             $data['finance_check'] = 2;
         }
-        if (!empty($data['receipt_account'])) {
+        if (isset($data['receipt_account'])) {
             $data['finance_check'] = 1;
         }
         return Order::create($data);
