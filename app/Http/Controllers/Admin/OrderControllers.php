@@ -73,7 +73,7 @@ class OrderControllers extends Controller
             $finance_check = $this->request->input('finance_check');
             if ($this->request->input('finance_check') == 0)
                 $finance_check = 0;
-            $order = $order->where('finance_check', '=', $this->request->input('finance_check'));
+            $order = $order->where('finance_check', '=', $finance_check);
         }
 
         if ($this->request->input('receipt_account_type')) {
