@@ -70,10 +70,11 @@ class OrderControllers extends Controller
         }
 
         if ($this->request->input('finance_check')) {
-            $finance_check = $this->request->input('finance_check');
-            if ($this->request->input('finance_check') == 0)
-                $finance_check = 0;
-            $order = $order->where('finance_check', '=', $finance_check);
+            $order = $order->where('finance_check', '=', $this->request->input('finance_check'));
+        }
+        $dataaa = $this->request->input();
+        if (isset($dataaa['finance_check']) && $dataaa['finance_check'] == 0) {
+            $order = $order->where('finance_check', 0);
         }
 
         if ($this->request->input('receipt_account_type')) {
