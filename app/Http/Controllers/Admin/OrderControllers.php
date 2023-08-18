@@ -184,15 +184,15 @@ class OrderControllers extends Controller
             $data['classify_local_id'] = null;
             $data['classify_id'] = null;
         }
-
-        if (!empty($data['pay_img'])) {
+       $img = $this->request->input();
+        if (isset($img['pay_img'])) {
             $data['finance_check'] = 0;
         }
 
-        if (!empty($data['twice_img'])) {
+        if (isset($img['twice_img'])) {
             $data['finance_check'] = 2;
         }
-        if (!empty($data['receipt_account'])) {
+        if (isset($img['receipt_account'])) {
             $data['finance_check'] = 1;
         }
         return Order::where('id', $this->request->input('id'))->Update($data);
