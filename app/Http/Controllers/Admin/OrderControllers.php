@@ -68,6 +68,15 @@ class OrderControllers extends Controller
         if ($this->request->input('status')) {
             $order = $order->where('status', '=', $this->request->input('status'));
         }
+
+        if ($this->request->input('finance_check')) {
+            $order = $order->where('finance_check', '=', $this->request->input('finance_check'));
+        }
+
+        if ($this->request->input('receipt_account_type')) {
+            $order = $order->where('receipt_account_type', '=', $this->request->input('receipt_account_type'));
+        }
+
 //        if ($this->request->input('created_at')) {
 //            $order = $order->where('created_at', 'like', "%" . $this->request->input('created_at') . "%");
 //        }
@@ -131,9 +140,19 @@ class OrderControllers extends Controller
             $data['classify_local_id'] = null;
             $data['classify_id'] = null;
         }
-        if(isset($data['amount']) && isset($data['received_amount'])){
-            if($data['amount'] == $data['received_amount'])
-            $data['finance_check'] = 1;
+
+        if (isset($data['amount']) && isset($data['received_amount'])) {
+            if ($data['amount'] == $data['received_amount'])
+                $data['finance_check'] = 0;
+        }
+
+        if (isset($data['amount']) && isset($data['twice_received_amount'])) {
+            if ($data['amount'] == $data['received_amount'])
+                $data['finance_check'] = 2;
+        }
+        if (isset($data['amount']) && isset($data['end_received_amount'])) {
+            if ($data['amount'] == $data['received_amount'])
+                $data['finance_check'] = 1;
         }
         return Order::create($data);
     }
@@ -163,8 +182,17 @@ class OrderControllers extends Controller
             $data['classify_local_id'] = null;
             $data['classify_id'] = null;
         }
-        if(isset($data['amount']) && isset($data['received_amount'])){
-            if($data['amount'] == $data['received_amount'])
+        if (isset($data['amount']) && isset($data['received_amount'])) {
+            if ($data['amount'] == $data['received_amount'])
+                $data['finance_check'] = 0;
+        }
+
+        if (isset($data['amount']) && isset($data['twice_received_amount'])) {
+            if ($data['amount'] == $data['received_amount'])
+                $data['finance_check'] = 2;
+        }
+        if (isset($data['amount']) && isset($data['end_received_amount'])) {
+            if ($data['amount'] == $data['received_amount'])
                 $data['finance_check'] = 1;
         }
         return Order::where('id', $this->request->input('id'))->Update($data);
@@ -176,13 +204,18 @@ class OrderControllers extends Controller
      * Author：cherish
      * @return mixed
      */
-    public function after(){
+    public function after()
+    {
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'after_banlace' => ['required'],
         ]);
+        $order = Order::where('id', $this->request->input('id'))->first();
         $data = $this->request->input();
         $data['after_time'] = date("Y-m-d H:i:s");
+        $order['amount'] = $data['amount'] - $data['after_banlace'];
+        if($order['amount'] < 0)
+            $order['amount'] = 0;
         return Order::where('id', $this->request->input('id'))->Update($data);
     }
 
@@ -294,7 +327,7 @@ class OrderControllers extends Controller
         $orderLogs['remark'] = $this->statusReplace(\Auth::user()->name, $order['status'], 5);
         $orderLogs['url'] = $this->request->input('manuscript');
         $orderLogs['order_id'] = $this->request->input('id');
-        $data= $this->request->input();
+        $data = $this->request->input();
         if (isset($data['classify_id'])) {
             $classify_local_id = (new ManuscriptBankControllers())->getClassifyId($this->request->input('classify_id'));
             $classify_id = implode(",", $this->request->input('classify_id'));
@@ -302,9 +335,9 @@ class OrderControllers extends Controller
             $classify_local_id = null;
             $classify_id = null;
         }
-        return DB::transaction(function () use ($orderLogs, $alter_word, $classify_id,$classify_local_id ) {
+        return DB::transaction(function () use ($orderLogs, $alter_word, $classify_id, $classify_local_id) {
             OrderLogs::create($orderLogs);
-            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5, 'alter_word' => $alter_word, 'classify_id' => $classify_id, 'classify_local_id' =>$classify_local_id, 'edit_submit_time' => date("Y-m-d H:i:s")]);
+            return Order::where('id', $this->request->input('id'))->Update(['manuscript' => $this->request->input('manuscript'), "status" => 5, 'alter_word' => $alter_word, 'classify_id' => $classify_id, 'classify_local_id' => $classify_local_id, 'edit_submit_time' => date("Y-m-d H:i:s")]);
         });
     }
 
@@ -341,7 +374,8 @@ class OrderControllers extends Controller
      * Author：cherish
      * @return mixed
      */
-    public function grade(){
+    public function grade()
+    {
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'hard_grade' => ['required'],
@@ -376,6 +410,11 @@ class OrderControllers extends Controller
             'receipt_time' => $data['receipt_time'] ?? '',
             'receipt_account' => $data['receipt_account'] ?? '',
             'remark' => $data['remark'] ?? '',
+            'twice_received_amount' => $data['twice_received_amount'] ?? 0,
+            'end_received_amount' => $data['end_received_amount'] ?? 0,
+            'end_time' => $data['end_time'] ?? '',
+            'twice_time' => $data['twice_time'] ?? '',
+            'receipt_account_type' => $data['receipt_account_type'] ?? 1,
 //            'wr_where' => $data['wr_where']
         ];
         return $initData;
@@ -434,7 +473,7 @@ class OrderControllers extends Controller
         //  Log::debug("11", [ count($data)]);
         if (count($data) < 1)
             throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NULL);
-        if (count($data) > 2000)
+        if (count($data) > 4000)
             throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NUM);
         $filename = '订单列表.xls';
         return Excel::download(new ExportsOrderService($data), $filename);

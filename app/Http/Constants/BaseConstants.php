@@ -45,4 +45,11 @@ interface BaseConstants
         4 => "提交客户",
         5 => "已交稿"
     ];
+
+    const FINANCE_STATUS = [
+        -1 => "否",
+        0 => "初审",
+        1 => "终审",
+        2 => "中审",
+    ];
 }
