@@ -146,14 +146,14 @@ class OrderControllers extends Controller
             $data['classify_id'] = null;
         }
 
-        if (isset($data['pay_img'])) {
+        if (!empty($data['pay_img'])) {
             $data['finance_check'] = 0;
         }
 
-        if (isset($data['twice_img'])) {
+        if (!empty($data['twice_img'])) {
             $data['finance_check'] = 2;
         }
-        if (isset($data['receipt_account'])) {
+        if (!empty($data['receipt_account'])) {
             $data['finance_check'] = 1;
         }
         return Order::create($data);
@@ -185,14 +185,14 @@ class OrderControllers extends Controller
             $data['classify_id'] = null;
         }
 
-        if (isset($data['pay_img'])) {
+        if (!empty($data['pay_img'])) {
             $data['finance_check'] = 0;
         }
 
-        if (isset($data['twice_img'])) {
+        if (!empty($data['twice_img'])) {
             $data['finance_check'] = 2;
         }
-        if (isset($data['receipt_account'])) {
+        if (!empty($data['receipt_account'])) {
             $data['finance_check'] = 1;
         }
         return Order::where('id', $this->request->input('id'))->Update($data);
