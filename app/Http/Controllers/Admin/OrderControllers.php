@@ -185,14 +185,14 @@ class OrderControllers extends Controller
             $data['classify_id'] = null;
         }
 
-        if (isset($data['pay_img'])) {
+        if (!empty($data['pay_img'])) {
             $data['finance_check'] = 0;
         }
 
-        if (isset($data['twice_img'])) {
+        if (!empty($data['twice_img'])) {
             $data['finance_check'] = 2;
         }
-        if (isset($data['receipt_account'])) {
+        if (!empty($data['receipt_account'])) {
             $data['finance_check'] = 1;
         }
         return Order::where('id', $this->request->input('id'))->Update($data);
@@ -470,7 +470,7 @@ class OrderControllers extends Controller
         //  Log::debug("11", [ count($data)]);
         if (count($data) < 1)
             throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NULL);
-        if (count($data) > 4000)
+        if (count($data) > 5000)
             throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NUM);
         $filename = '订单列表.xls';
         return Excel::download(new ExportsOrderService($data), $filename);
