@@ -70,6 +70,9 @@ class OrderControllers extends Controller
         }
 
         if ($this->request->input('finance_check')) {
+            $finance_check = $this->request->input('finance_check');
+            if ($this->request->input('finance_check') == 0)
+                $finance_check = 0;
             $order = $order->where('finance_check', '=', $this->request->input('finance_check'));
         }
 
