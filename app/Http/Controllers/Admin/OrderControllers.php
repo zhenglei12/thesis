@@ -142,17 +142,23 @@ class OrderControllers extends Controller
         }
 
         if (isset($data['amount']) && isset($data['received_amount'])) {
-            if ($data['amount'] == $data['received_amount'])
-                $data['finance_check'] = 0;
+            if ($data['amount'] > 0 && $data['received_amount'] > 0) {
+                if ($data['amount'] == $data['received_amount'])
+                    $data['finance_check'] = 0;
+            }
         }
 
         if (isset($data['amount']) && isset($data['twice_received_amount'])) {
-            if ($data['amount'] == $data['received_amount'])
-                $data['finance_check'] = 2;
+            if ($data['amount'] > 0 && $data['twice_received_amount'] > 0) {
+                if ($data['amount'] == $data['received_amount'])
+                    $data['finance_check'] = 2;
+            }
         }
         if (isset($data['amount']) && isset($data['end_received_amount'])) {
-            if ($data['amount'] == $data['received_amount'])
-                $data['finance_check'] = 1;
+            if ($data['amount'] > 0 &&  $data['end_received_amount'] > 0) {
+                if ($data['amount'] == $data['received_amount'])
+                    $data['finance_check'] = 1;
+            }
         }
         return Order::create($data);
     }
@@ -183,17 +189,23 @@ class OrderControllers extends Controller
             $data['classify_id'] = null;
         }
         if (isset($data['amount']) && isset($data['received_amount'])) {
-            if ($data['amount'] == $data['received_amount'])
-                $data['finance_check'] = 0;
+            if ($data['amount'] > 0 && $data['received_amount'] > 0) {
+                if ($data['amount'] == $data['received_amount'])
+                    $data['finance_check'] = 0;
+            }
         }
 
         if (isset($data['amount']) && isset($data['twice_received_amount'])) {
-            if ($data['amount'] == $data['received_amount'])
-                $data['finance_check'] = 2;
+            if ($data['amount'] > 0 && $data['twice_received_amount'] > 0) {
+                if ($data['amount'] == $data['received_amount'])
+                    $data['finance_check'] = 2;
+            }
         }
         if (isset($data['amount']) && isset($data['end_received_amount'])) {
-            if ($data['amount'] == $data['received_amount'])
-                $data['finance_check'] = 1;
+            if ($data['amount'] > 0 &&  $data['end_received_amount'] > 0) {
+                if ($data['amount'] == $data['received_amount'])
+                    $data['finance_check'] = 1;
+            }
         }
         return Order::where('id', $this->request->input('id'))->Update($data);
     }
@@ -415,6 +427,7 @@ class OrderControllers extends Controller
             'end_time' => $data['end_time'] ?? '',
             'twice_time' => $data['twice_time'] ?? '',
             'receipt_account_type' => $data['receipt_account_type'] ?? 1,
+            "twice_img" => $data['twice_img'] ?? ''
 //            'wr_where' => $data['wr_where']
         ];
         return $initData;
