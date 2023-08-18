@@ -39,7 +39,12 @@ class Order extends Model
         'edit_submit_time',
         'after_banlace',
         'after_time',
-        'hard_grade'
+        'hard_grade',
+        "twice_received_amount",
+        'end_received_amount',
+        "twice_time",
+        "end_time",
+        "receipt_account_type"
     ];
 
     protected $casts = [
