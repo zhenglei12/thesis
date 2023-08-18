@@ -470,7 +470,7 @@ class OrderControllers extends Controller
         //  Log::debug("11", [ count($data)]);
         if (count($data) < 1)
             throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NULL);
-        if (count($data) > 4000)
+        if (count($data) > 5000)
             throw \ExceptionFactory::business(CodeMessageConstants::CHECK_ORDER_NUM);
         $filename = '订单列表.xls';
         return Excel::download(new ExportsOrderService($data), $filename);
