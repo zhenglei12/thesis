@@ -91,7 +91,7 @@ class OrderControllers extends Controller
         $order = $order->orderBy('created_at', 'desc')->with('classify')->paginate($pageSize, ['*'], "page", $page);
         if ($order->items()) {
             foreach ($order->items() as $values) {
-                $values['received_all'] = $order['received_amount'] + $order['twice_received_amount'] + $order['end_received_amount'];
+                $values['received_all'] = $values['received_amount'] + $values['twice_received_amount'] + $values['end_received_amount'];
             }
         }
         return $order;
