@@ -315,7 +315,7 @@ class OrderControllers extends Controller
         $year = date('Y');
         $start_time = $year . '-01-01 00:00:00';
         $end_time = $year . '-12-31 23:59:59';
-        $data['amount_count'] = $order->whereDate('created_at', '<=',$start_time)->whereDate('created_at', '>=', $end_time)->sum('amount');
+        $data['amount_count'] = $order->whereDate('created_at', '>=',$start_time)->whereDate('created_at', '<=', $end_time)->sum('amount');
         $data['received_amount_count'] = $order->sum('received_amount');
         $data['month_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('amount');
         // $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
