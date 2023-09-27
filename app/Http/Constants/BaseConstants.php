@@ -26,7 +26,8 @@ interface BaseConstants
         2 => "期刊发表",
         3 => "ppt",
         4 => "翻译",
-        5 => "其他"
+        5 => "其他",
+        6 => "论文辅导"
     ];
 
     const ORDERPAYTYPE = [
