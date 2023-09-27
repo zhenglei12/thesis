@@ -91,5 +91,10 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permi
     Route::post("manuscript_bank/delete", "ManuscriptBankControllers@delete")->name('manuscript_bank-delete');
     Route::post("manuscript_bank/update", "ManuscriptBankControllers@update")->name('manuscript_bank-update');
     Route::post("manuscript_bank/add", "ManuscriptBankControllers@create")->name('manuscript_bank-create');
+
+    Route::post("department/list", "DepartmentController@list")->name('department-list');
+    Route::post("department/delete", "DepartmentController@delete")->name('department-delete');
+    Route::post("department/update", "DepartmentController@update")->name('department-update');
+    Route::post("department/add", "DepartmentController@create")->name('department-create');
 });
 
