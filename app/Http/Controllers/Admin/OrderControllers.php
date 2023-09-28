@@ -46,7 +46,7 @@ class OrderControllers extends Controller
         if (in_array('admin', $role)) {
             return $order;
         } elseif (in_array('after_admin', $role)) {
-            $order = $order->whereNotNull('sell_name');
+            $order = $order->whereNotNull('after_name');
             if ($department['level'] == 3) {
                 $userName = User::where('department_id', $department['id'])->pluck('name');
                 $parentDepartment = Department::where("id", $department['parent_id'])->first();
@@ -56,7 +56,7 @@ class OrderControllers extends Controller
                     if ($parentDepartment['alias'] == "edit")
                         $order = $order->whereIn('edit_name', $userName->toArray());
                     if ($parentDepartment['alias'] == "after")
-                        $order = $order->whereIn('sell_name', $userName->toArray());
+                        $order = $order->whereIn('after_name', $userName->toArray());
                 } else {
                     $order = $order->whereNull('staff_name');
                 }
@@ -72,7 +72,7 @@ class OrderControllers extends Controller
                     if ($parentDepartment['alias'] == "edit")
                         $order = $order->whereIn('edit_name', $userName->toArray());
                     if ($parentDepartment['alias'] == "after")
-                        $order = $order->whereIn('sell_name', $userName->toArray());
+                        $order = $order->whereIn('after_name', $userName->toArray());
                 } else {
                     $order = $order->whereNull('staff_name');
                 }
@@ -88,13 +88,13 @@ class OrderControllers extends Controller
                     if ($parentDepartment['alias'] == "edit")
                         $order = $order->whereIn('edit_name', $userName->toArray());
                     if ($parentDepartment['alias'] == "after")
-                        $order = $order->whereIn('sell_name', $userName->toArray());
+                        $order = $order->whereIn('after_name', $userName->toArray());
                 } else {
                     $order = $order->whereNull('staff_name');
                 }
             }
         } elseif (!in_array('after_admin', $role) && in_array('after', $role)) {
-            $order = $order->where('sell_name', $user->name);
+            $order = $order->where('after_name', $user->name);
         } elseif (!in_array('edit_admin', $role) && in_array('edit', $role)) {
             $order = $order->where('edit_name', $user->name);
         } elseif (!in_array('staff_admin', $role) && in_array('staff', $role)) {
@@ -447,9 +447,9 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'edit_name' => ['required'],
-            'sell_name' => ['required'],
+            'after_name' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'),'sell_name' => $this->request->input('sell_name'), "status" => 1]);
+        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'),'after_name' => $this->request->input('after_name'), "status" => 1]);
     }
 
     /**
