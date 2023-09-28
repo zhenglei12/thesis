@@ -96,7 +96,7 @@ class UserControllers extends Controller
             'email' => ['unique:' . (new User())->getTable() . ',email,' . $id],
             'department_id' => ['required', 'exists:' . (new Department())->getTable() . ',id'],
         ]);
-        $data = $this->request->input();
+        $data['department_id'] = $this->request->input('department_id');
         $data['name'] = $this->request->input('username');
         if ($this->request->input('password'))
             $data['password'] = Hash::make($this->request->input('password'));
