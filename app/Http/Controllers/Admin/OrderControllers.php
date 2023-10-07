@@ -47,50 +47,56 @@ class OrderControllers extends Controller
             return $order;
         } elseif (in_array('after_admin', $role)) {
             $order = $order->whereNotNull('after_name');
-            if ($department['level'] == 3) {
-                $userName = User::where('department_id', $department['id'])->pluck('name');
-                $parentDepartment = Department::where("id", $department['parent_id'])->first();
-                if ($userName->count()) {
-                    if ($parentDepartment['alias'] == "staff")
-                        $order = $order->whereIn('staff_name', $userName->toArray());
-                    if ($parentDepartment['alias'] == "edit")
-                        $order = $order->whereIn('edit_name', $userName->toArray());
-                    if ($parentDepartment['alias'] == "after")
-                        $order = $order->whereIn('after_name', $userName->toArray());
-                } else {
-                    $order = $order->whereNull('staff_name');
+            if ($department) {
+                if ($department['level'] == 3) {
+                    $userName = User::where('department_id', $department['id'])->pluck('name');
+                    $parentDepartment = Department::where("id", $department['parent_id'])->first();
+                    if ($userName->count()) {
+                        if ($parentDepartment['alias'] == "staff")
+                            $order = $order->whereIn('staff_name', $userName->toArray());
+                        if ($parentDepartment['alias'] == "edit")
+                            $order = $order->whereIn('edit_name', $userName->toArray());
+                        if ($parentDepartment['alias'] == "after")
+                            $order = $order->whereIn('after_name', $userName->toArray());
+                    } else {
+                        $order = $order->whereNull('staff_name');
+                    }
                 }
             }
         } elseif (in_array('staff_admin', $role)) {
             $order = $order->whereNotNull('staff_name');
-            if ($department['level'] == 3) {
-                $userName = User::where('department_id', $department['id'])->pluck('name');
-                $parentDepartment = Department::where("id", $department['parent_id'])->first();
-                if ($userName->count()) {
-                    if ($parentDepartment['alias'] == "staff")
-                        $order = $order->whereIn('staff_name', $userName->toArray());
-                    if ($parentDepartment['alias'] == "edit")
-                        $order = $order->whereIn('edit_name', $userName->toArray());
-                    if ($parentDepartment['alias'] == "after")
-                        $order = $order->whereIn('after_name', $userName->toArray());
-                } else {
-                    $order = $order->whereNull('staff_name');
+            if ($department) {
+                if ($department['level'] == 3) {
+                    $userName = User::where('department_id', $department['id'])->pluck('name');
+                    $parentDepartment = Department::where("id", $department['parent_id'])->first();
+                    if ($userName->count()) {
+                        if ($parentDepartment['alias'] == "staff")
+                            $order = $order->whereIn('staff_name', $userName->toArray());
+                        if ($parentDepartment['alias'] == "edit")
+                            $order = $order->whereIn('edit_name', $userName->toArray());
+                        if ($parentDepartment['alias'] == "after")
+                            $order = $order->whereIn('after_name', $userName->toArray());
+                    } else {
+                        $order = $order->whereNull('staff_name');
+                    }
                 }
             }
         } elseif (in_array('edit_admin', $role)) {
             $order = $order->whereNotNull('edit_name');
-            if ($department['level'] == 3) {
-                $userName = User::where('department_id', $department['id'])->pluck('name');
-                $parentDepartment = Department::where("id", $department['parent_id'])->first();
-                if ($userName->count()) {
-                    if ($parentDepartment['alias'] == "staff")
-                        $order = $order->whereIn('staff_name', $userName->toArray());
-                    if ($parentDepartment['alias'] == "edit")
-                        $order = $order->whereIn('edit_name', $userName->toArray());
-                    if ($parentDepartment['alias'] == "after")
-                        $order = $order->whereIn('after_name', $userName->toArray());
-                } else {
-                    $order = $order->whereNull('staff_name');
+            if ($department) {
+                if ($department['level'] == 3) {
+                    $userName = User::where('department_id', $department['id'])->pluck('name');
+                    $parentDepartment = Department::where("id", $department['parent_id'])->first();
+                    if ($userName->count()) {
+                        if ($parentDepartment['alias'] == "staff")
+                            $order = $order->whereIn('staff_name', $userName->toArray());
+                        if ($parentDepartment['alias'] == "edit")
+                            $order = $order->whereIn('edit_name', $userName->toArray());
+                        if ($parentDepartment['alias'] == "after")
+                            $order = $order->whereIn('after_name', $userName->toArray());
+                    } else {
+                        $order = $order->whereNull('staff_name');
+                    }
                 }
             }
         } elseif (!in_array('after_admin', $role) && in_array('after', $role)) {
