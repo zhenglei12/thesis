@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Constants\CodeMessageConstants;
 use App\Http\Controllers\Controller;
 use App\Http\Model\Classify;
+use App\Http\Model\Department;
 use App\Http\Model\Order;
 use App\Http\Model\OrderLogs;
 use App\Http\Model\User;
@@ -28,6 +29,81 @@ class OrderControllers extends Controller
     }
 
     /**
+     * FunctionName：getInitSelect
+     * Description：根据角色和部门获取权限
+     * User: cherish
+     * @param $order
+     * @return mixed|void
+     */
+    public function getInitSelect($order)
+    {
+        $user = \Auth::user();
+        $department_id = $user->department_id;
+        //查询当前部门信息
+        $department = Department::where('id', $department_id)->first();
+        //查询用户当前角色
+        $role = $user->roles->pluck('alias')->toArray();
+        if (in_array('admin', $role)) {
+            return $order;
+        } elseif (in_array('after_admin', $role)) {
+            $order = $order->whereNotNull('after_name');
+            if ($department['level'] == 3) {
+                $userName = User::where('department_id', $department['id'])->pluck('name');
+                $parentDepartment = Department::where("id", $department['parent_id'])->first();
+                if ($userName->count()) {
+                    if ($parentDepartment['alias'] == "staff")
+                        $order = $order->whereIn('staff_name', $userName->toArray());
+                    if ($parentDepartment['alias'] == "edit")
+                        $order = $order->whereIn('edit_name', $userName->toArray());
+                    if ($parentDepartment['alias'] == "after")
+                        $order = $order->whereIn('after_name', $userName->toArray());
+                } else {
+                    $order = $order->whereNull('staff_name');
+                }
+            }
+        } elseif (in_array('staff_admin', $role)) {
+            $order = $order->whereNotNull('staff_name');
+            if ($department['level'] == 3) {
+                $userName = User::where('department_id', $department['id'])->pluck('name');
+                $parentDepartment = Department::where("id", $department['parent_id'])->first();
+                if ($userName->count()) {
+                    if ($parentDepartment['alias'] == "staff")
+                        $order = $order->whereIn('staff_name', $userName->toArray());
+                    if ($parentDepartment['alias'] == "edit")
+                        $order = $order->whereIn('edit_name', $userName->toArray());
+                    if ($parentDepartment['alias'] == "after")
+                        $order = $order->whereIn('after_name', $userName->toArray());
+                } else {
+                    $order = $order->whereNull('staff_name');
+                }
+            }
+        } elseif (in_array('edit_admin', $role)) {
+            $order = $order->whereNotNull('edit_name');
+            if ($department['level'] == 3) {
+                $userName = User::where('department_id', $department['id'])->pluck('name');
+                $parentDepartment = Department::where("id", $department['parent_id'])->first();
+                if ($userName->count()) {
+                    if ($parentDepartment['alias'] == "staff")
+                        $order = $order->whereIn('staff_name', $userName->toArray());
+                    if ($parentDepartment['alias'] == "edit")
+                        $order = $order->whereIn('edit_name', $userName->toArray());
+                    if ($parentDepartment['alias'] == "after")
+                        $order = $order->whereIn('after_name', $userName->toArray());
+                } else {
+                    $order = $order->whereNull('staff_name');
+                }
+            }
+        } elseif (!in_array('after_admin', $role) && in_array('after', $role)) {
+            $order = $order->where('after_name', $user->name);
+        } elseif (!in_array('edit_admin', $role) && in_array('edit', $role)) {
+            $order = $order->where('edit_name', $user->name);
+        } elseif (!in_array('staff_admin', $role) && in_array('staff', $role)) {
+            $order = $order->where('staff_name', $user->name);
+        }
+        return $order;
+    }
+
+    /**
      * FunctionName：list
      * Description：列表
      * Author：cherish
@@ -38,6 +114,7 @@ class OrderControllers extends Controller
         $page = $this->request->input('page') ?? 1;
         $pageSize = $this->request->input('pageSize') ?? 10;
         $order = new Order();
+        $order = $this->getInitSelect($order);
         if ($this->request->input('subject')) {
             $order = $order->where('subject', 'like', "%" . $this->request->input('subject') . "%");
         }
@@ -234,7 +311,11 @@ class OrderControllers extends Controller
         if ($user->roles->pluck('alias')[0] == 'staff') {
             $order = $order->where('staff_name', $user['name']);
         }
-        $data['amount_count'] = $order->sum('amount');
+
+        $year = date('Y');
+        $start_time = $year . '-01-01 00:00:00';
+        $end_time = $year . '-12-31 23:59:59';
+        $data['amount_count'] = $order->whereDate('created_at', '>=',$start_time)->whereDate('created_at', '<=', $end_time)->sum('amount');
         $data['received_amount_count'] = $order->sum('received_amount');
         $data['month_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('amount');
         // $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
@@ -321,8 +402,8 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'manuscript' => ['required'],
-            "alter_word" => ['required'],
-            "classify_id" => ['required']
+//            "alter_word" => ['required'],
+//            "classify_id" => ['required']
         ]);
         $order = Order::find($this->request->input('id'));
         $alter_word = $this->request->input('alter_word') ?? $order['alter_word'];
@@ -366,8 +447,9 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'edit_name' => ['required'],
+            'after_name' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), "status" => 1]);
+        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'),'after_name' => $this->request->input('after_name'), "status" => 1]);
     }
 
     /**
@@ -427,6 +509,7 @@ class OrderControllers extends Controller
     public function export()
     {
         $order = new Order();
+        $order = $this->getInitSelect($order);
         if ($this->request->input('subject')) {
             $order = $order->where('subject', 'like', "%" . $this->request->input('subject') . "%");
         }

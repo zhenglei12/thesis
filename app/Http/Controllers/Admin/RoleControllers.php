@@ -10,6 +10,7 @@ use App\Http\Model\Role;
 use App\Http\Model\User;
 use App\Http\Services\PermissionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RoleControllers extends Controller
 {
@@ -125,9 +126,11 @@ class RoleControllers extends Controller
         ]);
         $id = $this->request->input('id');
         //  $this->checkRole($id);
-        $role = Role::query()->findOrFail($id);
-        $role->syncPermissions($this->request->input('permissions', []));
-        return;
+        return DB::transaction(function () use ($id) {
+            $role = Role::query()->findOrFail($id);
+            $role->syncPermissions($this->request->input('permissions', []));
+            return;
+        });
     }
 
     /**
@@ -159,6 +162,6 @@ class RoleControllers extends Controller
             'alias' => ['required', 'exists:' . (new Role())->getTable() . ',alias'],
         ]);
         $role = Role::where('alias', $this->request->input('alias'))->first();
-      return  User::role($role['name'])->get();
+        return User::role($role['name'])->get();
     }
 }
