@@ -44,7 +44,9 @@ interface BaseConstants
         2 => "打回修改",
         3 => "订单完成",
         4 => "提交客户",
-        5 => "已交稿"
+        5 => "已交稿",
+        6 => "售后中",
+        7 => "售后完成"
     ];
 
     const FINANCE_STATUS = [
