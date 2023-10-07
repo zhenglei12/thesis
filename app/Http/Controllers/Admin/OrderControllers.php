@@ -267,7 +267,7 @@ class OrderControllers extends Controller
             $data['classify_local_id'] = null;
             $data['classify_id'] = null;
         }
-       $img = $this->request->input();
+        $img = $this->request->input();
         if (isset($img['pay_img'])) {
             $data['finance_check'] = 0;
         }
@@ -315,7 +315,7 @@ class OrderControllers extends Controller
         $year = date('Y');
         $start_time = $year . '-01-01 00:00:00';
         $end_time = $year . '-12-31 23:59:59';
-        $data['amount_count'] = $order->whereDate('created_at', '>=',$start_time)->whereDate('created_at', '<=', $end_time)->sum('amount');
+        $data['amount_count'] = $order->whereDate('created_at', '>=', $start_time)->whereDate('created_at', '<=', $end_time)->sum('amount');
         $data['received_amount_count'] = $order->sum('received_amount');
         $data['month_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('amount');
         // $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
@@ -387,6 +387,9 @@ class OrderControllers extends Controller
             '3' => '订单完成',
             '4' => '提交客户',
             '5' => "已经交稿",
+            '6' => "售后中",
+            '7' => "售后完成"
+
         ];
         return $name . ",将订单状态" . $data[$historyStarus] . "修改为" . $data[$status];
     }
@@ -449,7 +452,7 @@ class OrderControllers extends Controller
             'edit_name' => ['required'],
             'after_name' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'),'after_name' => $this->request->input('after_name'), "status" => 1]);
+        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), 'after_name' => $this->request->input('after_name'), "status" => 1]);
     }
 
     /**
