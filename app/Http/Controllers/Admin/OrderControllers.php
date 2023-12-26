@@ -145,6 +145,9 @@ class OrderControllers extends Controller
         if ($this->request->input('edit_name')) {
             $order = $order->where('edit_name', 'like', "%" . $this->request->input('edit_name') . "%");
         }
+        if ($this->request->input('after_name')) {
+            $order = $order->where('after_name', 'like', "%" . $this->request->input('after_name') . "%");
+        }
         if ($this->request->input('submission_end_time')) {
             $order = $order->whereDate('submission_time', '<=', $this->request->input('submission_end_time'))->whereDate('submission_time', '>=', $this->request->input('submission_time'));
         }
@@ -456,9 +459,9 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'edit_name' => ['required'],
-            'after_name' => ['required'],
+//            'after_name' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), 'after_name' => $this->request->input('after_name'), "status" => 1]);
+        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), "status" => 1]);
     }
 
     /**
@@ -542,6 +545,9 @@ class OrderControllers extends Controller
         }
         if ($this->request->input('edit_name')) {
             $order = $order->where('edit_name', 'like', "%" . $this->request->input('edit_name') . "%");
+        }
+        if ($this->request->input('after_name')) {
+            $order = $order->where('after_name', 'like', "%" . $this->request->input('after_name') . "%");
         }
         if ($this->request->input('submission_end_time')) {
             $order = $order->whereDate('submission_time', '<=', $this->request->input('submission_end_time'))->whereDate('submission_time', '>=', $this->request->input('submission_time'));

@@ -30,4 +30,6 @@ class CodeMessageConstants
     const CHECK_ORDER_NUM = ['code' => 111, 'message' => "最多只能导出5000条"];
 
     const CHECK_LEVEL = ['code' => 112, 'message' => "最多只能添加三级"];
+
+    const NOT_CAN = ['code' => 113, 'message' => "您已提交，不能重复提交"];
 }
