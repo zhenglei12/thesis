@@ -22,7 +22,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['namespace' => 'Admin'], function () {
     Route::post("auth/login", "UserControllers@login");
     Route::post("order/from", "OrderFromControllers@add");
-    Route::post("order/from/detail", "OrderFromControllers@detail");
 });
 
 Route::group(['namespace' => 'Admin', 'middleware' => 'auth:sanctum'], function () {
@@ -72,6 +71,8 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permi
     Route::post("order/logs", "OrderControllers@logs")->name('order-logs');
     Route::post("order/edit_name", "OrderControllers@editName")->name('order-edit.name');
     Route::post("order/manuscript", "OrderControllers@manuscript")->name('order-manuscript');
+
+    Route::post("order/from/detail", "OrderFromControllers@detail")->name('order-from.detail');
 
     Route::post("order/hard_grade", "OrderControllers@grade")->name('order-hard.grade');
 
