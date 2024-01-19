@@ -139,6 +139,9 @@ class OrderControllers extends Controller
         if ($this->request->input('name')) {
             $order = $order->where('name', 'like', "%" . $this->request->input('name') . "%");
         }
+        if ($this->request->input('specialty')) {
+            $order = $order->where('specialty', 'like', "%" . $this->request->input('specialty') . "%");
+        }
         if ($this->request->input('staff_name')) {
             $order = $order->where('staff_name', 'like', "%" . $this->request->input('staff_name') . "%");
         }
@@ -325,7 +328,7 @@ class OrderControllers extends Controller
         $start_time = $year . '-01-01 00:00:00';
         $end_time = $year . '-12-31 23:59:59';
         $data['amount_count'] = $order->whereDate('created_at', '>=', $start_time)->whereDate('created_at', '<=', $end_time)->sum('amount');
-        $data['received_amount_count'] = $order->sum('received_amount');
+        $data['received_amount_count'] = $order->whereDate('created_at', '>=', $start_time)->whereDate('created_at', '<=', $end_time)->sum('received_amount');
         $data['month_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('amount');
         // $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
         // $data['month_received_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
@@ -459,9 +462,9 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'edit_name' => ['required'],
-//            'after_name' => ['required'],
+            'after_name' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), "status" => 1]);
+        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), 'after_name' => $this->request->input('after_name'), "status" => 1]);
     }
 
     /**
@@ -511,7 +514,8 @@ class OrderControllers extends Controller
             'end_time' => $data['end_time'] ?? '',
             'twice_time' => $data['twice_time'] ?? '',
             'receipt_account_type' => $data['receipt_account_type'] ?? 1,
-            "twice_img" => $data['twice_img'] ?? ''
+            "twice_img" => $data['twice_img'] ?? '',
+            "specialty" => $data['specialty'] ?? ''
 //            'wr_where' => $data['wr_where']
         ];
         return $initData;
@@ -558,6 +562,9 @@ class OrderControllers extends Controller
 
         if ($this->request->input('finance_check')) {
             $order = $order->where('finance_check', '=', $this->request->input('finance_check'));
+        }
+        if ($this->request->input('specialty')) {
+            $order = $order->where('specialty', 'like', "%" . $this->request->input('specialty') . "%");
         }
         $dataaa = $this->request->input();
         if (isset($dataaa['finance_check'])) {

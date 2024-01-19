@@ -45,7 +45,8 @@ class Order extends Model
         "twice_time",
         "end_time",
         "receipt_account_type",
-        "twice_img"
+        "twice_img",
+        "specialty"
     ];
 
     protected $casts = [
