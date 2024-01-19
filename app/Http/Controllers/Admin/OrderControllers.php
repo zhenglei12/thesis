@@ -139,6 +139,9 @@ class OrderControllers extends Controller
         if ($this->request->input('name')) {
             $order = $order->where('name', 'like', "%" . $this->request->input('name') . "%");
         }
+        if ($this->request->input('specialty')) {
+            $order = $order->where('specialty', 'like', "%" . $this->request->input('specialty') . "%");
+        }
         if ($this->request->input('staff_name')) {
             $order = $order->where('staff_name', 'like', "%" . $this->request->input('staff_name') . "%");
         }
@@ -511,7 +514,8 @@ class OrderControllers extends Controller
             'end_time' => $data['end_time'] ?? '',
             'twice_time' => $data['twice_time'] ?? '',
             'receipt_account_type' => $data['receipt_account_type'] ?? 1,
-            "twice_img" => $data['twice_img'] ?? ''
+            "twice_img" => $data['twice_img'] ?? '',
+            "specialty" => $data['specialty'] ?? ''
 //            'wr_where' => $data['wr_where']
         ];
         return $initData;
@@ -558,6 +562,9 @@ class OrderControllers extends Controller
 
         if ($this->request->input('finance_check')) {
             $order = $order->where('finance_check', '=', $this->request->input('finance_check'));
+        }
+        if ($this->request->input('specialty')) {
+            $order = $order->where('specialty', 'like', "%" . $this->request->input('specialty') . "%");
         }
         $dataaa = $this->request->input();
         if (isset($dataaa['finance_check'])) {
