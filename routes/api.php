@@ -71,6 +71,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth:sanctum', 'ly.permi
     Route::post("order/status", "OrderControllers@status")->name('order-status');
     Route::post("order/logs", "OrderControllers@logs")->name('order-logs');
     Route::post("order/edit_name", "OrderControllers@editName")->name('order-edit.name');
+    Route::post("order/after_name", "OrderControllers@afterName")->name('order-after.name');
     Route::post("order/manuscript", "OrderControllers@manuscript")->name('order-manuscript');
 
     Route::post("order/from/detail", "OrderFromControllers@detail")->name('order-from.detail');

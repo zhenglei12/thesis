@@ -148,6 +148,9 @@ class OrderControllers extends Controller
         if ($this->request->input('edit_name')) {
             $order = $order->where('edit_name', 'like', "%" . $this->request->input('edit_name') . "%");
         }
+        if ($this->request->input('task_ask')) {
+            $order = $order->where('task_ask', 'like', "%" . $this->request->input('task_ask') . "%");
+        }
         if ($this->request->input('after_name')) {
             $order = $order->where('after_name', 'like', "%" . $this->request->input('after_name') . "%");
         }
@@ -462,9 +465,24 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'edit_name' => ['required'],
+//            'after_name' => ['required'],
+        ]);
+        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), "status" => 1]);
+    }
+
+    /**
+     * FunctionName：after_name
+     * Description：分配售后
+     * User: cherish
+     * @return mixed
+     */
+    public function after_name()
+    {
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'after_name' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), 'after_name' => $this->request->input('after_name'), "status" => 1]);
+        return Order::where('id', $this->request->input('id'))->Update(['after_name' => $this->request->input('after_name'), "status" => 1]);
     }
 
     /**
@@ -549,6 +567,9 @@ class OrderControllers extends Controller
         }
         if ($this->request->input('edit_name')) {
             $order = $order->where('edit_name', 'like', "%" . $this->request->input('edit_name') . "%");
+        }
+        if ($this->request->input('task_ask')) {
+            $order = $order->where('task_ask', 'like', "%" . $this->request->input('task_ask') . "%");
         }
         if ($this->request->input('after_name')) {
             $order = $order->where('after_name', 'like', "%" . $this->request->input('after_name') . "%");
