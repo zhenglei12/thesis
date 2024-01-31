@@ -24,7 +24,7 @@ class ExportsOrderService implements FromCollection, WithHeadings, WithStyles
 
     public function headings(): array
     {
-        return ["id", "任务类型", "题目", "字数", "截止时间", "订单总额", "已收金额", "首款", "首款付款时间", "二次收款时间", "二次收款金额", "尾款金额", "尾款收款时间", "财务审核", "付款截图", "支付方式", "详细要求", "客服名称", "编辑名称",
+        return ["id", "任务类型", "题目", "字数", "截止时间", "订单总额", "已收金额", "首款", "首款付款时间", "二次收款时间", "二次收款金额", "尾款金额", "尾款收款时间", "财务审核", "付款截图", "支付方式", "详细要求", "客服名称", "编辑名称","售后人员","难度等级",
             "备注", "稿件下载", "状态", "创建时间"];
     }
 
@@ -81,6 +81,8 @@ class ExportsOrderService implements FromCollection, WithHeadings, WithStyles
                 $v['detail_re'],
                 $v['staff_name'],
                 $v['edit_name'],
+                $v['after_name'],
+                $v['hard_grade'],
                 $v['remark'],
                 $v['manuscript'],
                 BaseConstants::ORDERSTARTLIST[$v['status']],

@@ -148,6 +148,9 @@ class OrderControllers extends Controller
         if ($this->request->input('edit_name')) {
             $order = $order->where('edit_name', 'like', "%" . $this->request->input('edit_name') . "%");
         }
+        if ($this->request->input('task_ask')) {
+            $order = $order->where('task_ask', 'like', "%" . $this->request->input('task_ask') . "%");
+        }
         if ($this->request->input('after_name')) {
             $order = $order->where('after_name', 'like', "%" . $this->request->input('after_name') . "%");
         }
@@ -328,11 +331,15 @@ class OrderControllers extends Controller
         $start_time = $year . '-01-01 00:00:00';
         $end_time = $year . '-12-31 23:59:59';
         $data['amount_count'] = $order->whereDate('created_at', '>=', $start_time)->whereDate('created_at', '<=', $end_time)->sum('amount');
-        $data['received_amount_count'] = $order->whereDate('created_at', '>=', $start_time)->whereDate('created_at', '<=', $end_time)->sum('received_amount');
+        $received_amount_all = $order->whereDate('created_at', '>=', $start_time)->whereDate('created_at', '<=', $end_time)->sum('received_amount');
+        $twice_received_amount_all = $order->whereDate('created_at', '>=', $start_time)->whereDate('created_at', '<=', $end_time)->sum('twice_received_amount');
+        $data['received_amount_count'] = $received_amount_all + $twice_received_amount_all;
         $data['month_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('amount');
         // $data['month_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('amount');
         // $data['month_received_amount_count'] = $order->whereBetween('created_at', [date('Y-m-01'), date('Y-m-t')])->sum('received_amount');
-        $data['month_received_amount_count'] = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('received_amount');
+        $received_amount_month = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('received_amount');
+        $twice_received_amount_month = $order->whereDate('created_at', '<=', date('Y-m-t'))->whereDate('created_at', '>=', date('Y-m-01'))->sum('twice_received_amount');
+        $data['month_received_amount_count'] = $received_amount_month + $twice_received_amount_month;
         return $data;
     }
 
@@ -462,9 +469,24 @@ class OrderControllers extends Controller
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'edit_name' => ['required'],
+//            'after_name' => ['required'],
+        ]);
+        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), "status" => 1]);
+    }
+
+    /**
+     * FunctionName：after_name
+     * Description：分配售后
+     * User: cherish
+     * @return mixed
+     */
+    public function after_name()
+    {
+        $this->request->validate([
+            'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
             'after_name' => ['required'],
         ]);
-        return Order::where('id', $this->request->input('id'))->Update(['edit_name' => $this->request->input('edit_name'), 'after_name' => $this->request->input('after_name'), "status" => 1]);
+        return Order::where('id', $this->request->input('id'))->Update(['after_name' => $this->request->input('after_name'), "status" => 1]);
     }
 
     /**
@@ -549,6 +571,9 @@ class OrderControllers extends Controller
         }
         if ($this->request->input('edit_name')) {
             $order = $order->where('edit_name', 'like', "%" . $this->request->input('edit_name') . "%");
+        }
+        if ($this->request->input('task_ask')) {
+            $order = $order->where('task_ask', 'like', "%" . $this->request->input('task_ask') . "%");
         }
         if ($this->request->input('after_name')) {
             $order = $order->where('after_name', 'like', "%" . $this->request->input('after_name') . "%");
