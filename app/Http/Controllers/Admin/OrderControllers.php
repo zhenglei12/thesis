@@ -82,7 +82,7 @@ class OrderControllers extends Controller
                 }
             }
         } elseif (in_array('edit_admin', $role)) {
-            $order = $order->whereNotNull('edit_name');
+           // $order = $order->whereNotNull('edit_name');
             if ($department) {
                 if ($department['level'] == 3) {
                     $userName = User::where('department_id', $department['id'])->pluck('name');
@@ -102,7 +102,7 @@ class OrderControllers extends Controller
         } elseif (!in_array('after_admin', $role) && in_array('after', $role)) {
             $order = $order->where('after_name', $user->name);
         } elseif (!in_array('edit_admin', $role) && in_array('edit', $role)) {
-           // $order = $order->where('edit_name', $user->name);
+            $order = $order->where('edit_name', $user->name);
         } elseif (!in_array('staff_admin', $role) && in_array('staff', $role)) {
             $order = $order->where('staff_name', $user->name);
         }
