@@ -480,7 +480,7 @@ class OrderControllers extends Controller
      * User: cherish
      * @return mixed
      */
-    public function after_name()
+    public function afterName()
     {
         $this->request->validate([
             'id' => ['required', 'exists:' . (new Order())->getTable() . ',id'],
